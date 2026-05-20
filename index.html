@@ -6,9 +6,31 @@
   <title>IBEX 35 Radar — GitHub Pages + Cloudflare</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
-    :root{--bg:#08101f;--panel:#101a33;--panel2:#14213f;--text:#eef4ff;--muted:#9fb0d0;--line:#28395f;--accent:#70e1f5;--good:#39d98a;--bad:#ff5c7a;--warn:#ffd166;--r:20px;--shadow:0 18px 55px rgba(0,0,0,.35)}
-    [data-theme=light]{--bg:#f5f7fb;--panel:#fff;--panel2:#eef3fb;--text:#13213c;--muted:#667085;--line:#d9e2f2;--accent:#0077b6;--good:#0c9958;--bad:#d7263d;--warn:#9c6a00;--shadow:0 18px 45px rgba(20,33,61,.10)}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 0 0,rgba(112,225,245,.14),transparent 34%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}button,input,select{font:inherit}.wrap{max-width:1400px;margin:auto;padding:18px}.top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;position:sticky;top:0;z-index:4;padding:14px 0;background:linear-gradient(var(--bg),rgba(0,0,0,0))}.brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:16px;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:grid;place-items:center;color:#06101f;font-weight:1000;box-shadow:var(--shadow)}h1{font-size:clamp(22px,4vw,36px);margin:0}.sub{margin:3px 0 0;color:var(--muted);font-size:13px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 13px;border-radius:14px;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--accent),#9b7cff);border:0;color:#071324;font-weight:900}.btn.danger{color:var(--bad)}.grid{display:grid;grid-template-columns:370px 1fr;gap:18px}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}.card h2{font-size:18px;margin:0 0 12px}.small{font-size:12px;color:var(--muted);line-height:1.45}label{display:block;font-size:12px;color:var(--muted);margin:11px 0 6px}.field,select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--text);padding:11px 12px;border-radius:14px;outline:none}option{color:#111}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stack{display:flex;flex-direction:column;gap:12px}.list{max-height:430px;overflow:auto;padding-right:4px}.stock{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,.035);margin-bottom:8px}.stock input{width:18px;height:18px}.ticker{font-weight:900}.name{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pill{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);color:var(--muted)}.status{border:1px solid var(--line);background:rgba(255,255,255,.035);padding:10px;border-radius:15px;color:var(--muted);line-height:1.5}.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.kpi{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:13px}.kpi .v{font-size:23px;font-weight:1000;margin-top:7px}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}.chartBox{height:440px}.tabs{display:flex;gap:8px;flex-wrap:wrap}.tab.active{background:var(--accent);color:#06101f;font-weight:900}.tableWrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13.5px}.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.table th:first-child,.table td:first-child{text-align:left}.aiBox{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.analysis{line-height:1.6;color:var(--muted)}.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;margin:2px;font-size:12px}.alerts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.alertItem{border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,.035)}
+    :root{
+      --bg:#08101f;--panel:#101a33;--panel2:#14213f;--text:#eef4ff;--muted:#9fb0d0;--line:#28395f;
+      --accent:#70e1f5;--good:#39d98a;--bad:#ff5c7a;--warn:#ffd166;--r:20px;--shadow:0 18px 55px rgba(0,0,0,.35)
+    }
+    [data-theme=light]{
+      --bg:#f5f7fb;--panel:#fff;--panel2:#eef3fb;--text:#13213c;--muted:#667085;--line:#d9e2f2;
+      --accent:#0077b6;--good:#0c9958;--bad:#d7263d;--warn:#9c6a00;--shadow:0 18px 45px rgba(20,33,61,.10)
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at 0 0,rgba(112,225,245,.14),transparent 34%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    button,input,select{font:inherit}.wrap{max-width:1400px;margin:auto;padding:18px}
+    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;position:sticky;top:0;z-index:4;padding:14px 0;background:linear-gradient(var(--bg),rgba(0,0,0,0))}
+    .brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:16px;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:grid;place-items:center;color:#06101f;font-weight:1000;box-shadow:var(--shadow)}
+    h1{font-size:clamp(22px,4vw,36px);margin:0}.sub{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 13px;border-radius:14px;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--accent),#9b7cff);border:0;color:#071324;font-weight:900}.btn.danger{color:var(--bad)}
+    .grid{display:grid;grid-template-columns:370px 1fr;gap:18px}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}.card h2{font-size:18px;margin:0 0 12px}
+    .small{font-size:12px;color:var(--muted);line-height:1.45}label{display:block;font-size:12px;color:var(--muted);margin:11px 0 6px}
+    .field,select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--text);padding:11px 12px;border-radius:14px;outline:none}option{color:#111}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stack{display:flex;flex-direction:column;gap:12px}.list{max-height:430px;overflow:auto;padding-right:4px}
+    .stock{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,.035);margin-bottom:8px}.stock input{width:18px;height:18px}.ticker{font-weight:900}.name{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pill{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);color:var(--muted)}
+    .status{border:1px solid var(--line);background:rgba(255,255,255,.035);padding:10px;border-radius:15px;color:var(--muted);line-height:1.5}.status.goodStatus{border-color:rgba(57,217,138,.45)}.status.badStatus{border-color:rgba(255,92,122,.55)}
+    .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.kpi{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:13px}.kpi .v{font-size:23px;font-weight:1000;margin-top:7px}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+    .chartBox{height:440px}.tableWrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13.5px}.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.table th:first-child,.table td:first-child{text-align:left}
+    .aiBox{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.analysis{line-height:1.6;color:var(--muted)}.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;margin:2px;font-size:12px}
+    .alerts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.alertItem{border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,.035)}
     @media(max-width:1050px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.aiBox{grid-template-columns:1fr}.top{position:static;flex-direction:column}.toolbar{justify-content:flex-start}.chartBox{height:340px}.alerts{grid-template-columns:1fr}}
     @media(max-width:560px){.wrap{padding:12px}.card{padding:13px}.row,.kpis{grid-template-columns:1fr}.btn{width:100%}.toolbar{width:100%}.chartBox{height:300px}.table{font-size:12px}}
   </style>
@@ -16,55 +38,387 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><div class="logo">IBX</div><div><h1>IBEX 35 Radar</h1><p class="sub">GitHub Pages + Cloudflare Worker · análisis, alertas, CSV y predicción heurística.</p></div></div>
-    <div class="toolbar"><button class="btn" id="themeBtn">Tema</button><button class="btn" id="notifyBtn">Notificaciones</button><button class="btn" id="csvBtn">Exportar CSV</button><button class="btn primary" id="refreshBtn">Actualizar</button></div>
+    <div class="brand">
+      <div class="logo">IBX</div>
+      <div>
+        <h1>IBEX 35 Radar</h1>
+        <p class="sub">GitHub Pages + Cloudflare Worker · análisis, alertas, CSV y predicción heurística.</p>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="themeBtn">Tema</button>
+      <button class="btn" id="notifyBtn">Notificaciones</button>
+      <button class="btn" id="csvBtn">Exportar CSV</button>
+      <button class="btn primary" id="refreshBtn">Actualizar</button>
+    </div>
   </header>
+
   <main class="grid">
     <aside class="stack">
       <section class="card">
         <h2>Configuración</h2>
-        <label>URL del Cloudflare Worker</label><input class="field" id="workerUrl" placeholder="https://ibex35-proxy.tuusuario.workers.dev" />
-        <p class="small">Déjalo vacío para modo demo. El Worker evita CORS y cachea datos.</p>
-        <div class="row"><div><label>Periodo</label><select id="period"><option value="90">3 meses</option><option value="180" selected>6 meses</option><option value="365">1 año</option><option value="730">2 años</option></select></div><div><label>Gráfico</label><select id="chartMode"><option value="normalized" selected>Normalizado</option><option value="price">Precio</option><option value="rsi">RSI</option></select></div></div>
-        <div class="status" id="status">Modo demo hasta configurar el Worker.</div>
+        <label>URL del Cloudflare Worker</label>
+        <input class="field" id="workerUrl" value="https://bolsa-api.gorbea0.workers.dev" placeholder="https://bolsa-api.gorbea0.workers.dev" />
+        <p class="small">La app solo muestra datos recibidos desde el Worker. Si el Worker falla, se muestra error y no se generan cotizaciones simuladas.</p>
+        <div class="row">
+          <div>
+            <label>Periodo</label>
+            <select id="period">
+              <option value="90">3 meses</option>
+              <option value="180" selected>6 meses</option>
+              <option value="365">1 año</option>
+              <option value="730">2 años</option>
+            </select>
+          </div>
+          <div>
+            <label>Gráfico</label>
+            <select id="chartMode">
+              <option value="normalized" selected>Normalizado</option>
+              <option value="price">Precio</option>
+              <option value="rsi">RSI</option>
+            </select>
+          </div>
+        </div>
+        <div class="status" id="status">Esperando conexión con el Worker de Cloudflare.</div>
       </section>
+
       <section class="card">
-        <h2>Valores</h2><input class="field" id="search" placeholder="Buscar valor..." />
-        <div class="toolbar" style="margin:12px 0"><button class="btn" id="selectAll">Todo</button><button class="btn" id="clearAll">Limpiar</button></div>
+        <h2>Valores</h2>
+        <input class="field" id="search" placeholder="Buscar valor..." />
+        <div class="toolbar" style="margin:12px 0">
+          <button class="btn" id="selectAll">Todo</button>
+          <button class="btn" id="clearAll">Limpiar</button>
+        </div>
         <div class="list" id="stockList"></div>
       </section>
-      <section class="card"><h2>Alertas</h2><div class="alerts" id="alerts"></div></section>
+
+      <section class="card">
+        <h2>Alertas</h2>
+        <div class="alerts" id="alerts"></div>
+      </section>
     </aside>
+
     <section class="stack">
-      <section class="card"><h2>Resumen</h2><div class="kpis"><div class="kpi"><span class="small">Seguidos</span><div class="v" id="kCount">0</div></div><div class="kpi"><span class="small">Alcistas</span><div class="v good" id="kBull">0</div></div><div class="kpi"><span class="small">Bajistas</span><div class="v bad" id="kBear">0</div></div><div class="kpi"><span class="small">Mejor score</span><div class="v" id="kBest">—</div></div><div class="kpi"><span class="small">Actualizado</span><div class="v" style="font-size:15px" id="kTime">—</div></div></div></section>
-      <section class="card"><h2>Gráfico</h2><div class="chartBox"><canvas id="chart"></canvas></div><p class="small">La leyenda no oculta series accidentalmente. Base 100 en modo normalizado.</p></section>
-      <section class="card"><h2>IA local / interpretación</h2><div class="aiBox"><div class="analysis" id="aiText">Pulsa actualizar.</div><div id="tags"></div></div></section>
-      <section class="card"><h2>Tabla técnica</h2><div class="tableWrap"><table class="table" id="table"><thead><tr><th>Valor</th><th>Último</th><th>Var.</th><th>SMA20</th><th>SMA50</th><th>RSI</th><th>MACD</th><th>Boll.</th><th>Vol.</th><th>Soporte</th><th>Resist.</th><th>Pred. 10d</th><th>Señal</th></tr></thead><tbody></tbody></table></div></section>
+      <section class="card">
+        <h2>Resumen</h2>
+        <div class="kpis">
+          <div class="kpi"><span class="small">Seguidos</span><div class="v" id="kCount">0</div></div>
+          <div class="kpi"><span class="small">Alcistas</span><div class="v good" id="kBull">0</div></div>
+          <div class="kpi"><span class="small">Bajistas</span><div class="v bad" id="kBear">0</div></div>
+          <div class="kpi"><span class="small">Mejor score</span><div class="v" id="kBest">—</div></div>
+          <div class="kpi"><span class="small">Actualizado</span><div class="v" style="font-size:15px" id="kTime">—</div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Gráfico</h2>
+        <div class="chartBox"><canvas id="chart"></canvas></div>
+        <p class="small">La leyenda no oculta series accidentalmente. Base 100 en modo normalizado.</p>
+      </section>
+
+      <section class="card">
+        <h2>IA local / interpretación</h2>
+        <div class="aiBox">
+          <div class="analysis" id="aiText">Pulsa actualizar.</div>
+          <div id="tags"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Tabla técnica</h2>
+        <div class="tableWrap">
+          <table class="table" id="table">
+            <thead>
+              <tr>
+                <th>Valor</th><th>Último</th><th>Var.</th><th>SMA20</th><th>SMA50</th><th>RSI</th><th>MACD</th><th>Boll.</th><th>Vol.</th><th>Soporte</th><th>Resist.</th><th>Pred. 10d</th><th>Señal</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
 </div>
+
 <script>
 (() => {
-const UNIVERSE=[['san.es','Santander','Banca'],['bbva.es','BBVA','Banca'],['cabk.es','CaixaBank','Banca'],['bkt.es','Bankinter','Banca'],['sab.es','Sabadell','Banca'],['uni.es','Unicaja','Banca'],['ibe.es','Iberdrola','Eléctrica'],['ele.es','Endesa','Eléctrica'],['red.es','Redeia','Eléctrica'],['ntgy.es','Naturgy','Energía'],['rep.es','Repsol','Petróleo'],['eng.es','Enagás','Gas'],['itx.es','Inditex','Retail'],['ams.es','Amadeus','Tecnología viajes'],['aena.es','Aena','Infraestructuras'],['acs.es','ACS','Construcción'],['ana.es','Acciona','Construcción'],['ane.es','Acciona Energía','Renovables'],['fer.es','Ferrovial','Infraestructuras'],['clnx.es','Cellnex','Telecom'],['tef.es','Telefónica','Telecom'],['idr.es','Indra','Tecnología'],['grif.es','Grifols','Salud'],['rovio.es','Rovi','Salud'],['map.es','Mapfre','Seguros'],['mrl.es','Merlin Properties','Inmobiliario'],['colon.es','Colonial','Inmobiliario'],['acx.es','Acerinox','Acero'],['mts.es','ArcelorMittal','Acero'],['slr.es','Solaria','Renovables'],['fdr.es','Fluidra','Consumo'],['log.es','Logista','Distribución'],['scyr.es','Sacyr','Construcción'],['puig.es','Puig','Consumo']].map(([symbol,name,sector])=>({symbol,name,sector}));
-const $=s=>document.querySelector(s), store=(k,v)=>localStorage.setItem(k,JSON.stringify(v)), load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
-const state={selected:load('ibxSelected',['san.es','bbva.es','ibe.es','itx.es','rep.es']),alerts:load('ibxAlerts',{}),data:{},rows:[],chart:null};
-const fmt=n=>Number.isFinite(n)?n.toLocaleString('es-ES',{maximumFractionDigits:2}):'—', pct=n=>Number.isFinite(n)?`${n>=0?'+':''}${n.toFixed(2)}%`:'—';
-function renderStocks(){const q=$('#search').value.toLowerCase();$('#stockList').innerHTML=UNIVERSE.filter(s=>!q||`${s.symbol} ${s.name} ${s.sector}`.toLowerCase().includes(q)).map(s=>`<label class="stock"><input type="checkbox" data-s="${s.symbol}" ${state.selected.includes(s.symbol)?'checked':''}><div><div class="ticker">${s.name}</div><div class="name">${s.symbol.toUpperCase()} · ${s.sector}</div></div><span class="pill">${s.sector}</span></label>`).join('');document.querySelectorAll('[data-s]').forEach(x=>x.onchange=e=>{const s=e.target.dataset.s;state.selected=e.target.checked?[...new Set([...state.selected,s])]:state.selected.filter(v=>v!==s);store('ibxSelected',state.selected);renderAlerts();updateKpis();});}
-function renderAlerts(){ $('#alerts').innerHTML=state.selected.map(sym=>{const s=UNIVERSE.find(x=>x.symbol===sym),a=state.alerts[sym]||{};return `<div class="alertItem"><b>${s.name}</b><div class="row"><div><label>Mín.</label><input class="field" type="number" step="0.01" data-a="min" data-sym="${sym}" value="${a.min??''}"></div><div><label>Máx.</label><input class="field" type="number" step="0.01" data-a="max" data-sym="${sym}" value="${a.max??''}"></div></div></div>`}).join('')||'<p class="small">Selecciona valores.</p>';document.querySelectorAll('[data-a]').forEach(i=>i.oninput=e=>{const sym=e.target.dataset.sym,t=e.target.dataset.a;state.alerts[sym]??={};const v=parseFloat(e.target.value);Number.isFinite(v)?state.alerts[sym][t]=v:delete state.alerts[sym][t];store('ibxAlerts',state.alerts);});}
-function parseCsv(t){const [h,...ls]=t.trim().split(/\r?\n/),ks=h.split(',');return ls.map(l=>Object.fromEntries(l.split(',').map((v,i)=>[ks[i],v])))}
-function demo(sym,days){let seed=[...sym].reduce((a,c)=>a+c.charCodeAt(0),0),p=5+(seed%45),out=[];for(let i=days;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const drift=((seed%7)-3)/2500,noise=Math.sin((days-i+seed)/9)*.012+(Math.random()-.5)*.01;p=Math.max(.5,p*(1+drift+noise));out.push({date:d.toISOString().slice(0,10),close:+p.toFixed(4),high:+(p*1.012).toFixed(4),low:+(p*.988).toFixed(4),volume:100000+seed*1000});}out.demo=true;return out;}
-async function getSeries(sym,days){const base=$('#workerUrl').value.trim().replace(/\/$/,'');if(!base)return demo(sym,days);localStorage.setItem('workerUrl',base);const r=await fetch(`${base}/history?symbol=${encodeURIComponent(sym)}&days=${days}`);if(!r.ok)throw new Error(await r.text());const j=await r.json();return j.data.map(x=>({date:x.date,close:+x.close,high:+x.high,low:+x.low,volume:+x.volume||0}));}
-function sma(a,n){return a.length<n?NaN:a.slice(-n).reduce((s,x)=>s+x.close,0)/n}function emaVals(vals,n){const k=2/(n+1),out=[];let e=vals[0];for(const v of vals){e=v*k+e*(1-k);out.push(e)}return out}function rsiSeries(a,n=14){const out=[];for(let i=0;i<a.length;i++){if(i<n){out.push(NaN);continue}let g=0,l=0;for(let j=i-n+1;j<=i;j++){const c=a[j].close-a[j-1].close;c>=0?g+=c:l-=c}out.push(l===0?100:100-100/(1+g/l))}return out}function std(vals){const m=vals.reduce((a,b)=>a+b,0)/vals.length;return Math.sqrt(vals.reduce((a,b)=>a+(b-m)**2,0)/vals.length)}function linPred(a,h=10){const y=a.slice(-60).map(x=>x.close),n=y.length;if(n<8)return NaN;const sx=n*(n-1)/2,sx2=(n-1)*n*(2*n-1)/6,sy=y.reduce((a,b)=>a+b,0),sxy=y.reduce((a,b,i)=>a+i*b,0),m=(n*sxy-sx*sy)/(n*sx2-sx*sx),b=(sy-m*sx)/n;return m*(n-1+h)+b}
-function metrics(sym,ser){const closes=ser.map(x=>x.close),last=closes.at(-1),first=closes[0],s20=sma(ser,20),s50=sma(ser,50),rsi=rsiSeries(ser).at(-1),ema12=emaVals(closes,12),ema26=emaVals(closes,26),macd=ema12.at(-1)-ema26.at(-1),ret=closes.slice(1).map((v,i)=>v/closes[i]-1),vol=std(ret.slice(-30))*Math.sqrt(252)*100,pred=linPred(ser),predPct=(pred/last-1)*100,recent=ser.slice(-30),support=Math.min(...recent.map(x=>x.low)),resistance=Math.max(...recent.map(x=>x.high)),sd20=std(closes.slice(-20)),upper=s20+2*sd20,lower=s20-2*sd20;let score=0;score+=last>s20?1:-1;score+=s20>s50?1:-1;score+=macd>0?1:-1;score+=predPct>1?1:predPct<-1?-1:0;score+=rsi<30?1:rsi>70?-1:0;const signal=score>=3?'Alcista fuerte':score>=1?'Alcista':score<=-3?'Bajista fuerte':score<=-1?'Bajista':'Neutral';return {sym,name:UNIVERSE.find(x=>x.symbol===sym)?.name||sym,last,change:(last/first-1)*100,s20,s50,rsi,macd,vol,pred,predPct,support,resistance,upper,lower,bb:last>upper?'Alta':last<lower?'Baja':'Media',score,signal,demo:ser.demo};}
-async function refresh(){const btn=$('#refreshBtn');btn.disabled=true;btn.textContent='Actualizando...';const days=+$('#period').value;state.data={};let fail=0;for(const sym of state.selected){try{state.data[sym]=await getSeries(sym,days)}catch(e){fail++;state.data[sym]=demo(sym,days)}}state.rows=Object.entries(state.data).map(([s,d])=>metrics(s,d));renderChart();renderTable();renderAI();checkAlerts();updateKpis();$('#kTime').textContent=new Date().toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'});$('#status').innerHTML=$('#workerUrl').value.trim()?`Datos vía Worker. Fallback demo en ${fail} valores.`:'Modo demo local. Configura Worker para datos reales.';btn.disabled=false;btn.textContent='Actualizar';}
-function renderChart(){const mode=$('#chartMode').value,labels=[...new Set(Object.values(state.data).flatMap(s=>s.map(x=>x.date)))],datasets=Object.entries(state.data).map(([sym,ser])=>{const m=metrics(sym,ser),name=m.name+(ser.demo?' DEMO':'');let data;if(mode==='rsi'){const rs=rsiSeries(ser);data=ser.map((x,i)=>({x:x.date,y:rs[i]}));}else if(mode==='price'){data=ser.map(x=>({x:x.date,y:x.close}));}else{const b=ser[0].close;data=ser.map(x=>({x:x.date,y:x.close/b*100}));}return {label:name,data,tension:.25,pointRadius:0,borderWidth:2};});if(state.chart)state.chart.destroy();state.chart=new Chart($('#chart'),{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{onClick:null,labels:{color:getComputedStyle(document.body).getPropertyValue('--text')}}},scales:{x:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),maxTicksLimit:8},grid:{color:'rgba(150,160,190,.14)'}},y:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted')},grid:{color:'rgba(150,160,190,.14)'}}}}});}
-function renderTable(){ $('#table tbody').innerHTML=state.rows.map(r=>`<tr><td><b>${r.name}</b><br><span class="small">${r.sym.toUpperCase()}${r.demo?' · DEMO':''}</span></td><td>${fmt(r.last)}</td><td class="${r.change>=0?'good':'bad'}">${pct(r.change)}</td><td>${fmt(r.s20)}</td><td>${fmt(r.s50)}</td><td class="${r.rsi>70?'warn':r.rsi<30?'good':''}">${fmt(r.rsi)}</td><td class="${r.macd>=0?'good':'bad'}">${fmt(r.macd)}</td><td>${r.bb}</td><td>${fmt(r.vol)}%</td><td>${fmt(r.support)}</td><td>${fmt(r.resistance)}</td><td class="${r.predPct>=0?'good':'bad'}">${pct(r.predPct)}</td><td class="${r.score>0?'good':r.score<0?'bad':'warn'}"><b>${r.signal}</b></td></tr>`).join('')||'<tr><td colspan="13">Sin datos</td></tr>';}
-function renderAI(){const rows=state.rows;if(!rows.length)return;const bull=rows.filter(r=>r.score>0),bear=rows.filter(r=>r.score<0),best=[...rows].sort((a,b)=>b.score-a.score||b.change-a.change).slice(0,3),risk=[...rows].sort((a,b)=>b.vol-a.vol).slice(0,3),over=rows.filter(r=>r.rsi>70),under=rows.filter(r=>r.rsi<30);$('#aiText').innerHTML=`<p><b>Lectura IA local:</b> el modelo heurístico combina tendencia SMA20/SMA50, MACD, RSI, bandas de Bollinger, volatilidad anualizada y regresión lineal a 10 sesiones.</p><p>Sesgo agregado: <b class="${bull.length>=bear.length?'good':'bad'}">${bull.length>=bear.length?'constructivo':'defensivo'}</b>. Hay ${bull.length} valores con score positivo y ${bear.length} con score negativo.</p><p>Mejores candidatos técnicos: <b>${best.map(r=>r.name).join(', ')}</b>. Mayor riesgo por volatilidad: <b>${risk.map(r=>r.name).join(', ')}</b>.</p><p>${over.length?'Posible sobrecompra: '+over.map(r=>r.name).join(', ')+'. ':''}${under.length?'Posible sobreventa: '+under.map(r=>r.name).join(', ')+'. ':''}</p><p class="small">No es asesoramiento financiero. La predicción es estadística simple y debe validarse con contexto fundamental, noticias y gestión de riesgo.</p>`;$('#tags').innerHTML=rows.sort((a,b)=>b.score-a.score).map(r=>`<span class="badge ${r.score>0?'good':r.score<0?'bad':'warn'}">${r.name}: ${r.signal}</span>`).join('');}
-function updateKpis(){const rows=state.rows;$('#kCount').textContent=state.selected.length;$('#kBull').textContent=rows.filter(r=>r.score>0).length;$('#kBear').textContent=rows.filter(r=>r.score<0).length;$('#kBest').textContent=rows.length?[...rows].sort((a,b)=>b.score-a.score)[0].name:'—';}
-function checkAlerts(){for(const r of state.rows){const a=state.alerts[r.sym]||{},hit=(Number.isFinite(a.min)&&r.last<=a.min)||(Number.isFinite(a.max)&&r.last>=a.max);if(hit&&Notification?.permission==='granted')new Notification('Alerta IBEX 35',{body:`${r.name}: ${fmt(r.last)}`});}}
-function exportCsv(){const cols=['symbol','name','last','change_pct','sma20','sma50','rsi','macd','bollinger','volatility_pct','support','resistance','prediction_10d_pct','signal','demo'];const lines=[cols.join(',')].concat(state.rows.map(r=>cols.map(c=>JSON.stringify(({symbol:r.sym,name:r.name,last:r.last,change_pct:r.change,sma20:r.s20,sma50:r.s50,rsi:r.rsi,macd:r.macd,bollinger:r.bb,volatility_pct:r.vol,support:r.support,resistance:r.resistance,prediction_10d_pct:r.predPct,signal:r.signal,demo:!!r.demo})[c]??'')).join(',')));const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ibex35_radar_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href);}
-$('#workerUrl').value=localStorage.getItem('workerUrl')||'';$('#search').oninput=renderStocks;$('#selectAll').onclick=()=>{state.selected=UNIVERSE.map(s=>s.symbol);store('ibxSelected',state.selected);renderStocks();renderAlerts();updateKpis()};$('#clearAll').onclick=()=>{state.selected=[];store('ibxSelected',state.selected);renderStocks();renderAlerts();updateKpis()};$('#refreshBtn').onclick=refresh;$('#chartMode').onchange=renderChart;$('#period').onchange=refresh;$('#csvBtn').onclick=exportCsv;$('#themeBtn').onclick=()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==='light'?'dark':'light';renderChart()};$('#notifyBtn').onclick=async()=>{'Notification'in window&&await Notification.requestPermission()};renderStocks();renderAlerts();refresh();
+  const DEFAULT_WORKER_URL = 'https://bolsa-api.gorbea0.workers.dev';
+
+  const UNIVERSE = [
+    ['san.es','Santander','Banca'],['bbva.es','BBVA','Banca'],['cabk.es','CaixaBank','Banca'],['bkt.es','Bankinter','Banca'],['sab.es','Sabadell','Banca'],['uni.es','Unicaja','Banca'],
+    ['ibe.es','Iberdrola','Eléctrica'],['ele.es','Endesa','Eléctrica'],['red.es','Redeia','Eléctrica'],['ntgy.es','Naturgy','Energía'],['rep.es','Repsol','Petróleo'],['eng.es','Enagás','Gas'],
+    ['itx.es','Inditex','Retail'],['ams.es','Amadeus','Tecnología viajes'],['aena.es','Aena','Infraestructuras'],['acs.es','ACS','Construcción'],['ana.es','Acciona','Construcción'],['ane.es','Acciona Energía','Renovables'],['fer.es','Ferrovial','Infraestructuras'],
+    ['clnx.es','Cellnex','Telecom'],['tef.es','Telefónica','Telecom'],['idr.es','Indra','Tecnología'],['grif.es','Grifols','Salud'],['rovio.es','Rovi','Salud'],['map.es','Mapfre','Seguros'],['mrl.es','Merlin Properties','Inmobiliario'],['colon.es','Colonial','Inmobiliario'],
+    ['acx.es','Acerinox','Acero'],['mts.es','ArcelorMittal','Acero'],['slr.es','Solaria','Renovables'],['fdr.es','Fluidra','Consumo'],['log.es','Logista','Distribución'],['scyr.es','Sacyr','Construcción'],['puig.es','Puig','Consumo']
+  ].map(([symbol,name,sector]) => ({symbol,name,sector}));
+
+  const $ = s => document.querySelector(s);
+  const store = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+  const load = (k,d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+  const fmt = n => Number.isFinite(n) ? n.toLocaleString('es-ES',{maximumFractionDigits:2}) : '—';
+  const pct = n => Number.isFinite(n) ? `${n>=0?'+':''}${n.toFixed(2)}%` : '—';
+
+  const state = {
+    selected: load('ibxSelected',['san.es','bbva.es','ibe.es','itx.es','rep.es']),
+    alerts: load('ibxAlerts',{}),
+    data: {}, rows: [], chart: null
+  };
+
+  function setStatus(html, kind='') {
+    const el = $('#status');
+    el.innerHTML = html;
+    el.classList.remove('goodStatus','badStatus');
+    if(kind === 'good') el.classList.add('goodStatus');
+    if(kind === 'bad') el.classList.add('badStatus');
+  }
+
+  function renderStocks(){
+    const q = $('#search').value.toLowerCase();
+    $('#stockList').innerHTML = UNIVERSE
+      .filter(s => !q || `${s.symbol} ${s.name} ${s.sector}`.toLowerCase().includes(q))
+      .map(s => `<label class="stock"><input type="checkbox" data-s="${s.symbol}" ${state.selected.includes(s.symbol)?'checked':''}><div><div class="ticker">${s.name}</div><div class="name">${s.symbol.toUpperCase()} · ${s.sector}</div></div><span class="pill">${s.sector}</span></label>`)
+      .join('');
+
+    document.querySelectorAll('[data-s]').forEach(x => x.onchange = e => {
+      const s = e.target.dataset.s;
+      state.selected = e.target.checked ? [...new Set([...state.selected,s])] : state.selected.filter(v => v !== s);
+      store('ibxSelected', state.selected);
+      renderAlerts(); updateKpis();
+    });
+  }
+
+  function renderAlerts(){
+    $('#alerts').innerHTML = state.selected.map(sym => {
+      const s = UNIVERSE.find(x => x.symbol === sym);
+      const a = state.alerts[sym] || {};
+      return `<div class="alertItem"><b>${s.name}</b><div class="row"><div><label>Mín.</label><input class="field" type="number" step="0.01" data-a="min" data-sym="${sym}" value="${a.min??''}"></div><div><label>Máx.</label><input class="field" type="number" step="0.01" data-a="max" data-sym="${sym}" value="${a.max??''}"></div></div></div>`;
+    }).join('') || '<p class="small">Selecciona valores.</p>';
+
+    document.querySelectorAll('[data-a]').forEach(i => i.oninput = e => {
+      const sym = e.target.dataset.sym, t = e.target.dataset.a;
+      state.alerts[sym] ??= {};
+      const v = parseFloat(e.target.value);
+      Number.isFinite(v) ? state.alerts[sym][t] = v : delete state.alerts[sym][t];
+      store('ibxAlerts', state.alerts);
+    });
+  }
+
+  async function getSeries(sym, days){
+    const base = $('#workerUrl').value.trim().replace(/\/$/, '');
+    if(!base) throw new Error('Worker no configurado');
+
+    localStorage.setItem('workerUrl', base);
+    const r = await fetch(`${base}/history?symbol=${encodeURIComponent(sym)}&days=${days}`, { cache: 'no-store' });
+    if(!r.ok) throw new Error(`${sym}: ${r.status} ${await r.text()}`);
+
+    const j = await r.json();
+    if(!j || !Array.isArray(j.data) || j.data.length < 2) throw new Error(`${sym}: respuesta sin datos suficientes`);
+
+    return j.data
+      .map(x => ({date:x.date, close:+x.close, high:+x.high, low:+x.low, volume:+x.volume || 0}))
+      .filter(x => x.date && Number.isFinite(x.close));
+  }
+
+  function sma(a,n){ return a.length<n ? NaN : a.slice(-n).reduce((s,x)=>s+x.close,0)/n; }
+
+  function emaVals(vals,n){
+    if(!vals.length) return [];
+    const k = 2/(n+1), out = [];
+    let e = vals[0];
+    for(const v of vals){ e = v*k + e*(1-k); out.push(e); }
+    return out;
+  }
+
+  function rsiSeries(a,n=14){
+    const out = [];
+    for(let i=0;i<a.length;i++){
+      if(i<n){ out.push(NaN); continue; }
+      let g=0,l=0;
+      for(let j=i-n+1;j<=i;j++){
+        const c = a[j].close - a[j-1].close;
+        c >= 0 ? g += c : l -= c;
+      }
+      out.push(l===0 ? 100 : 100 - 100/(1+g/l));
+    }
+    return out;
+  }
+
+  function std(vals){
+    const clean = vals.filter(Number.isFinite);
+    if(clean.length < 2) return NaN;
+    const m = clean.reduce((a,b)=>a+b,0)/clean.length;
+    return Math.sqrt(clean.reduce((a,b)=>a+(b-m)**2,0)/clean.length);
+  }
+
+  function linPred(a,h=10){
+    const y = a.slice(-60).map(x=>x.close), n = y.length;
+    if(n < 8) return NaN;
+    const sx = n*(n-1)/2, sx2 = (n-1)*n*(2*n-1)/6;
+    const sy = y.reduce((a,b)=>a+b,0), sxy = y.reduce((a,b,i)=>a+i*b,0);
+    const den = n*sx2 - sx*sx;
+    if(!den) return NaN;
+    const m = (n*sxy - sx*sy)/den, b = (sy - m*sx)/n;
+    return m*(n-1+h)+b;
+  }
+
+  function metrics(sym,ser){
+    const closes = ser.map(x=>x.close), last = closes.at(-1), first = closes[0];
+    const s20 = sma(ser,20), s50 = sma(ser,50), rsi = rsiSeries(ser).at(-1);
+    const ema12 = emaVals(closes,12), ema26 = emaVals(closes,26), macd = ema12.at(-1)-ema26.at(-1);
+    const ret = closes.slice(1).map((v,i)=>v/closes[i]-1);
+    const vol = std(ret.slice(-30))*Math.sqrt(252)*100;
+    const pred = linPred(ser), predPct = (pred/last-1)*100;
+    const recent = ser.slice(-30);
+    const support = Math.min(...recent.map(x=>x.low).filter(Number.isFinite));
+    const resistance = Math.max(...recent.map(x=>x.high).filter(Number.isFinite));
+    const sd20 = std(closes.slice(-20));
+    const upper = s20 + 2*sd20, lower = s20 - 2*sd20;
+
+    let score = 0;
+    score += last > s20 ? 1 : -1;
+    score += s20 > s50 ? 1 : -1;
+    score += macd > 0 ? 1 : -1;
+    score += predPct > 1 ? 1 : predPct < -1 ? -1 : 0;
+    score += rsi < 30 ? 1 : rsi > 70 ? -1 : 0;
+
+    const signal = score>=3 ? 'Alcista fuerte' : score>=1 ? 'Alcista' : score<=-3 ? 'Bajista fuerte' : score<=-1 ? 'Bajista' : 'Neutral';
+    return {sym, name:UNIVERSE.find(x=>x.symbol===sym)?.name||sym, last, change:(last/first-1)*100, s20, s50, rsi, macd, vol, pred, predPct, support, resistance, upper, lower, bb:last>upper?'Alta':last<lower?'Baja':'Media', score, signal};
+  }
+
+  async function refresh(){
+    const btn = $('#refreshBtn');
+    btn.disabled = true;
+    btn.textContent = 'Actualizando...';
+    setStatus('Cargando datos reales desde Cloudflare Worker...');
+
+    const days = +$('#period').value;
+    state.data = {};
+    const errors = [];
+
+    for(const sym of state.selected){
+      try{
+        state.data[sym] = await getSeries(sym, days);
+      }catch(e){
+        console.error(e);
+        errors.push(e.message || String(e));
+      }
+    }
+
+    state.rows = Object.entries(state.data).map(([s,d]) => metrics(s,d));
+    renderChart(); renderTable(); renderAI(); checkAlerts(); updateKpis();
+    $('#kTime').textContent = new Date().toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'});
+
+    if(errors.length){
+      setStatus(`<span class="bad">Error:</span> ${errors.length} valor(es) no pudieron cargarse desde el Worker. No se han generado datos simulados.<br><span class="small">${errors.slice(0,3).join('<br>')}</span>`, 'bad');
+    } else {
+      setStatus('<span class="good">Datos reales cargados correctamente desde Cloudflare Worker.</span>', 'good');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Actualizar';
+  }
+
+  function renderChart(){
+    const mode = $('#chartMode').value;
+    const labels = [...new Set(Object.values(state.data).flatMap(s=>s.map(x=>x.date)))];
+    const datasets = Object.entries(state.data).map(([sym,ser]) => {
+      const m = metrics(sym,ser), name = m.name;
+      let data;
+      if(mode === 'rsi'){
+        const rs = rsiSeries(ser);
+        data = ser.map((x,i)=>({x:x.date,y:rs[i]}));
+      } else if(mode === 'price') {
+        data = ser.map(x=>({x:x.date,y:x.close}));
+      } else {
+        const b = ser[0].close;
+        data = ser.map(x=>({x:x.date,y:x.close/b*100}));
+      }
+      return {label:name, data, tension:.25, pointRadius:0, borderWidth:2};
+    });
+
+    if(state.chart) state.chart.destroy();
+    state.chart = new Chart($('#chart'),{
+      type:'line',
+      data:{labels,datasets},
+      options:{
+        responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+        plugins:{legend:{onClick:null, labels:{color:getComputedStyle(document.body).getPropertyValue('--text')}}},
+        scales:{
+          x:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),maxTicksLimit:8},grid:{color:'rgba(150,160,190,.14)'}},
+          y:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted')},grid:{color:'rgba(150,160,190,.14)'}}
+        }
+      }
+    });
+  }
+
+  function renderTable(){
+    $('#table tbody').innerHTML = state.rows.map(r => `<tr><td><b>${r.name}</b><br><span class="small">${r.sym.toUpperCase()}</span></td><td>${fmt(r.last)}</td><td class="${r.change>=0?'good':'bad'}">${pct(r.change)}</td><td>${fmt(r.s20)}</td><td>${fmt(r.s50)}</td><td class="${r.rsi>70?'warn':r.rsi<30?'good':''}">${fmt(r.rsi)}</td><td class="${r.macd>=0?'good':'bad'}">${fmt(r.macd)}</td><td>${r.bb}</td><td>${fmt(r.vol)}%</td><td>${fmt(r.support)}</td><td>${fmt(r.resistance)}</td><td class="${r.predPct>=0?'good':'bad'}">${pct(r.predPct)}</td><td class="${r.score>0?'good':r.score<0?'bad':'warn'}"><b>${r.signal}</b></td></tr>`).join('') || '<tr><td colspan="13">Sin datos. Revisa la URL del Worker y pulsa Actualizar.</td></tr>';
+  }
+
+  function renderAI(){
+    const rows = state.rows;
+    if(!rows.length){
+      $('#aiText').innerHTML = 'Sin datos reales cargados. Revisa la URL del Worker y pulsa Actualizar.';
+      $('#tags').innerHTML = '';
+      return;
+    }
+
+    const bull = rows.filter(r=>r.score>0), bear = rows.filter(r=>r.score<0);
+    const best = [...rows].sort((a,b)=>b.score-a.score || b.change-a.change).slice(0,3);
+    const risk = [...rows].sort((a,b)=>b.vol-a.vol).slice(0,3);
+    const over = rows.filter(r=>r.rsi>70), under = rows.filter(r=>r.rsi<30);
+
+    $('#aiText').innerHTML = `<p><b>Lectura IA local:</b> el modelo heurístico combina tendencia SMA20/SMA50, MACD, RSI, bandas de Bollinger, volatilidad anualizada y regresión lineal a 10 sesiones.</p><p>Sesgo agregado: <b class="${bull.length>=bear.length?'good':'bad'}">${bull.length>=bear.length?'constructivo':'defensivo'}</b>. Hay ${bull.length} valores con score positivo y ${bear.length} con score negativo.</p><p>Mejores candidatos técnicos: <b>${best.map(r=>r.name).join(', ')}</b>. Mayor riesgo por volatilidad: <b>${risk.map(r=>r.name).join(', ')}</b>.</p><p>${over.length?'Posible sobrecompra: '+over.map(r=>r.name).join(', ')+'. ':''}${under.length?'Posible sobreventa: '+under.map(r=>r.name).join(', ')+'. ':''}</p><p class="small">No es asesoramiento financiero. La predicción es estadística simple y debe validarse con contexto fundamental, noticias y gestión de riesgo.</p>`;
+    $('#tags').innerHTML = [...rows].sort((a,b)=>b.score-a.score).map(r=>`<span class="badge ${r.score>0?'good':r.score<0?'bad':'warn'}">${r.name}: ${r.signal}</span>`).join('');
+  }
+
+  function updateKpis(){
+    const rows = state.rows;
+    $('#kCount').textContent = state.selected.length;
+    $('#kBull').textContent = rows.filter(r=>r.score>0).length;
+    $('#kBear').textContent = rows.filter(r=>r.score<0).length;
+    $('#kBest').textContent = rows.length ? [...rows].sort((a,b)=>b.score-a.score)[0].name : '—';
+  }
+
+  function checkAlerts(){
+    for(const r of state.rows){
+      const a = state.alerts[r.sym] || {};
+      const hit = (Number.isFinite(a.min) && r.last <= a.min) || (Number.isFinite(a.max) && r.last >= a.max);
+      if(hit && Notification?.permission === 'granted') new Notification('Alerta IBEX 35',{body:`${r.name}: ${fmt(r.last)}`});
+    }
+  }
+
+  function exportCsv(){
+    const cols = ['symbol','name','last','change_pct','sma20','sma50','rsi','macd','bollinger','volatility_pct','support','resistance','prediction_10d_pct','signal'];
+    const lines = [cols.join(',')].concat(state.rows.map(r => cols.map(c => JSON.stringify(({symbol:r.sym,name:r.name,last:r.last,change_pct:r.change,sma20:r.s20,sma50:r.s50,rsi:r.rsi,macd:r.macd,bollinger:r.bb,volatility_pct:r.vol,support:r.support,resistance:r.resistance,prediction_10d_pct:r.predPct,signal:r.signal})[c] ?? '')).join(',')));
+    const blob = new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `ibex35_radar_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  const savedWorker = localStorage.getItem('workerUrl');
+  $('#workerUrl').value = savedWorker || DEFAULT_WORKER_URL;
+
+  $('#search').oninput = renderStocks;
+  $('#selectAll').onclick = () => { state.selected = UNIVERSE.map(s=>s.symbol); store('ibxSelected',state.selected); renderStocks(); renderAlerts(); updateKpis(); };
+  $('#clearAll').onclick = () => { state.selected = []; store('ibxSelected',state.selected); renderStocks(); renderAlerts(); updateKpis(); };
+  $('#refreshBtn').onclick = refresh;
+  $('#chartMode').onchange = renderChart;
+  $('#period').onchange = refresh;
+  $('#csvBtn').onclick = exportCsv;
+  $('#themeBtn').onclick = () => { document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; renderChart(); };
+  $('#notifyBtn').onclick = async () => { if('Notification' in window) await Notification.requestPermission(); };
+
+  renderStocks();
+  renderAlerts();
+  updateKpis();
+  refresh();
 })();
 </script>
 </body>
 </html>
+
