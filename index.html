@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IBEX 35 Radar — GitHub Pages + Cloudflare</title>
+  <title>IBEX 35 Radar — Cartera + Análisis Técnico</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     :root{
@@ -16,23 +16,28 @@
     }
     *{box-sizing:border-box}
     body{margin:0;background:radial-gradient(circle at 0 0,rgba(112,225,245,.14),transparent 34%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    button,input,select{font:inherit}.wrap{max-width:1400px;margin:auto;padding:18px}
+    button,input,select{font:inherit}.wrap{max-width:1440px;margin:auto;padding:18px}
     .top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;position:sticky;top:0;z-index:4;padding:14px 0;background:linear-gradient(var(--bg),rgba(0,0,0,0))}
     .brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:16px;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:grid;place-items:center;color:#06101f;font-weight:1000;box-shadow:var(--shadow)}
     h1{font-size:clamp(22px,4vw,36px);margin:0}.sub{margin:3px 0 0;color:var(--muted);font-size:13px}
     .toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 13px;border-radius:14px;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--accent),#9b7cff);border:0;color:#071324;font-weight:900}.btn.danger{color:var(--bad)}
-    .grid{display:grid;grid-template-columns:370px 1fr;gap:18px}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}.card h2{font-size:18px;margin:0 0 12px}
+    .grid{display:grid;grid-template-columns:390px 1fr;gap:18px}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}.card h2{font-size:18px;margin:0 0 12px}
     .small{font-size:12px;color:var(--muted);line-height:1.45}label{display:block;font-size:12px;color:var(--muted);margin:11px 0 6px}
     .field,select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--text);padding:11px 12px;border-radius:14px;outline:none}option{color:#111}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stack{display:flex;flex-direction:column;gap:12px}.list{max-height:430px;overflow:auto;padding-right:4px}
-    .stock{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,.035);margin-bottom:8px}.stock input{width:18px;height:18px}.ticker{font-weight:900}.name{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pill{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);color:var(--muted)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stack{display:flex;flex-direction:column;gap:12px}.list{max-height:470px;overflow:auto;padding-right:4px}
+    .stock{display:grid;grid-template-columns:auto 1fr 92px;gap:10px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,.035);margin-bottom:8px}.stock input[type=checkbox]{width:18px;height:18px}.stock .shares{padding:9px 10px;text-align:right}.ticker{font-weight:900}.name{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pill{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);color:var(--muted)}
     .status{border:1px solid var(--line);background:rgba(255,255,255,.035);padding:10px;border-radius:15px;color:var(--muted);line-height:1.5}.status.goodStatus{border-color:rgba(57,217,138,.45)}.status.badStatus{border-color:rgba(255,92,122,.55)}
     .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.kpi{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:13px}.kpi .v{font-size:23px;font-weight:1000;margin-top:7px}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
-    .chartBox{height:440px}.tableWrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13.5px}.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.table th:first-child,.table td:first-child{text-align:left}
+    .chartBox{height:430px}.chartBox.smallChart{height:360px}.tableWrap{overflow:auto;-webkit-overflow-scrolling:touch}.table{width:100%;border-collapse:collapse;font-size:13.5px}.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.table th:first-child,.table td:first-child{text-align:left}
     .aiBox{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.analysis{line-height:1.6;color:var(--muted)}.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;margin:2px;font-size:12px}
     .alerts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.alertItem{border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,.035)}
-    @media(max-width:1050px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.aiBox{grid-template-columns:1fr}.top{position:static;flex-direction:column}.toolbar{justify-content:flex-start}.chartBox{height:340px}.alerts{grid-template-columns:1fr}}
-    @media(max-width:560px){.wrap{padding:12px}.card{padding:13px}.row,.kpis{grid-template-columns:1fr}.btn{width:100%}.toolbar{width:100%}.chartBox{height:300px}.table{font-size:12px}}
+    .mobileHint{display:none}.sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    @media(max-width:1050px){
+      .grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.aiBox{grid-template-columns:1fr}.top{position:static;flex-direction:column}.toolbar{justify-content:flex-start}.chartBox{height:340px}.alerts{grid-template-columns:1fr}.list{max-height:none}
+    }
+    @media(max-width:560px){
+      .wrap{padding:10px}.card{padding:12px;border-radius:16px}.row,.kpis{grid-template-columns:1fr}.btn{width:100%;min-height:44px}.toolbar{width:100%}.chartBox{height:290px}.chartBox.smallChart{height:285px}.table{font-size:12px}.table th,.table td{padding:9px 8px}.top{gap:10px}.brand{align-items:flex-start}.logo{width:40px;height:40px;border-radius:14px}.sub{font-size:12px}.stock{grid-template-columns:auto 1fr;gap:8px}.stock .shares{grid-column:1 / -1;width:100%;text-align:left}.stock::after{content:'Acciones';grid-column:1 / -1;font-size:11px;color:var(--muted);margin-top:-52px;margin-left:10px;pointer-events:none}.mobileHint{display:block}.tableWrap{border:1px solid var(--line);border-radius:14px}.kpi .v{font-size:20px}.field,select{min-height:44px}
+    }
   </style>
 </head>
 <body>
@@ -42,7 +47,7 @@
       <div class="logo">IBX</div>
       <div>
         <h1>IBEX 35 Radar</h1>
-        <p class="sub">GitHub Pages + Cloudflare Worker · análisis, alertas, CSV y predicción heurística.</p>
+        <p class="sub">Cartera, análisis técnico, alertas, CSV y predicción heurística.</p>
       </div>
     </div>
     <div class="toolbar">
@@ -71,7 +76,7 @@
             </select>
           </div>
           <div>
-            <label>Gráfico</label>
+            <label>Gráfico técnico</label>
             <select id="chartMode">
               <option value="normalized" selected>Normalizado</option>
               <option value="price">Precio</option>
@@ -83,12 +88,13 @@
       </section>
 
       <section class="card">
-        <h2>Valores</h2>
+        <div class="sectionTitle"><h2>Valores y acciones</h2><span class="small">Introduce cuántas acciones tienes</span></div>
         <input class="field" id="search" placeholder="Buscar valor..." />
         <div class="toolbar" style="margin:12px 0">
           <button class="btn" id="selectAll">Todo</button>
           <button class="btn" id="clearAll">Limpiar</button>
         </div>
+        <p class="small mobileHint">En móvil, desliza las tablas horizontalmente si no caben.</p>
         <div class="list" id="stockList"></div>
       </section>
 
@@ -103,17 +109,39 @@
         <h2>Resumen</h2>
         <div class="kpis">
           <div class="kpi"><span class="small">Seguidos</span><div class="v" id="kCount">0</div></div>
-          <div class="kpi"><span class="small">Alcistas</span><div class="v good" id="kBull">0</div></div>
-          <div class="kpi"><span class="small">Bajistas</span><div class="v bad" id="kBear">0</div></div>
+          <div class="kpi"><span class="small">Valor cartera</span><div class="v" id="kPortfolio">0 €</div></div>
+          <div class="kpi"><span class="small">Gan./pérd.</span><div class="v" id="kPnL">0 €</div></div>
           <div class="kpi"><span class="small">Mejor score</span><div class="v" id="kBest">—</div></div>
           <div class="kpi"><span class="small">Actualizado</span><div class="v" style="font-size:15px" id="kTime">—</div></div>
         </div>
       </section>
 
       <section class="card">
-        <h2>Gráfico</h2>
+        <h2>Gráfico técnico</h2>
         <div class="chartBox"><canvas id="chart"></canvas></div>
-        <p class="small">La leyenda no oculta series accidentalmente. Base 100 en modo normalizado.</p>
+        <p class="small">Normalizado compara rendimiento relativo. Precio muestra cotización real. RSI muestra momentum.</p>
+      </section>
+
+      <section class="card">
+        <div class="sectionTitle">
+          <h2>Evolución de cartera</h2>
+          <select id="portfolioChartMode" style="max-width:260px">
+            <option value="value" selected>Valor total en €</option>
+            <option value="pnl">Ganancia / pérdida en €</option>
+          </select>
+        </div>
+        <div class="chartBox smallChart"><canvas id="portfolioChart"></canvas></div>
+        <p class="small">Reconstruye hacia atrás el valor de tu cartera multiplicando tus acciones por el precio histórico de cada valor. La variación se calcula frente al primer día visible del periodo.</p>
+      </section>
+
+      <section class="card">
+        <h2>Tabla de cartera</h2>
+        <div class="tableWrap">
+          <table class="table" id="portfolioTable">
+            <thead><tr><th>Valor</th><th>Acciones</th><th>Último</th><th>Valor €</th><th>Peso</th><th>Valor inicial €</th><th>Gan./pérd. €</th><th>Gan./pérd. %</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </section>
 
       <section class="card">
@@ -157,12 +185,14 @@
   const store = (k,v) => localStorage.setItem(k, JSON.stringify(v));
   const load = (k,d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
   const fmt = n => Number.isFinite(n) ? n.toLocaleString('es-ES',{maximumFractionDigits:2}) : '—';
+  const money = n => Number.isFinite(n) ? n.toLocaleString('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:2}) : '—';
   const pct = n => Number.isFinite(n) ? `${n>=0?'+':''}${n.toFixed(2)}%` : '—';
 
   const state = {
     selected: load('ibxSelected',['san.es','bbva.es','ibe.es','itx.es','rep.es']),
     alerts: load('ibxAlerts',{}),
-    data: {}, rows: [], chart: null
+    holdings: load('ibxHoldings',{}),
+    data: {}, rows: [], chart: null, portfolioChart: null, portfolioSeries: []
   };
 
   function setStatus(html, kind='') {
@@ -177,14 +207,23 @@
     const q = $('#search').value.toLowerCase();
     $('#stockList').innerHTML = UNIVERSE
       .filter(s => !q || `${s.symbol} ${s.name} ${s.sector}`.toLowerCase().includes(q))
-      .map(s => `<label class="stock"><input type="checkbox" data-s="${s.symbol}" ${state.selected.includes(s.symbol)?'checked':''}><div><div class="ticker">${s.name}</div><div class="name">${s.symbol.toUpperCase()} · ${s.sector}</div></div><span class="pill">${s.sector}</span></label>`)
+      .map(s => `<label class="stock"><input type="checkbox" data-s="${s.symbol}" ${state.selected.includes(s.symbol)?'checked':''}><div><div class="ticker">${s.name}</div><div class="name">${s.symbol.toUpperCase()} · ${s.sector}</div></div><input class="field shares" type="number" min="0" step="1" data-h="${s.symbol}" value="${state.holdings[s.symbol] ?? ''}" placeholder="Acciones"></label>`)
       .join('');
 
     document.querySelectorAll('[data-s]').forEach(x => x.onchange = e => {
       const s = e.target.dataset.s;
       state.selected = e.target.checked ? [...new Set([...state.selected,s])] : state.selected.filter(v => v !== s);
       store('ibxSelected', state.selected);
-      renderAlerts(); updateKpis();
+      renderAlerts(); updateAllPortfolioViews(); updateKpis();
+    });
+
+    document.querySelectorAll('[data-h]').forEach(x => x.oninput = e => {
+      const sym = e.target.dataset.h;
+      const v = parseFloat(e.target.value);
+      if(Number.isFinite(v) && v > 0) state.holdings[sym] = v;
+      else delete state.holdings[sym];
+      store('ibxHoldings', state.holdings);
+      updateAllPortfolioViews(); updateKpis();
     });
   }
 
@@ -306,7 +345,7 @@
     }
 
     state.rows = Object.entries(state.data).map(([s,d]) => metrics(s,d));
-    renderChart(); renderTable(); renderAI(); checkAlerts(); updateKpis();
+    renderChart(); renderTable(); renderAI(); checkAlerts(); updateAllPortfolioViews(); updateKpis();
     $('#kTime').textContent = new Date().toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'});
 
     if(errors.length){
@@ -352,6 +391,67 @@
     });
   }
 
+  function buildPortfolioSeries(){
+    const active = Object.entries(state.holdings).filter(([sym,shares]) => state.data[sym] && Number.isFinite(+shares) && +shares > 0);
+    if(!active.length) return [];
+
+    const dates = [...new Set(active.flatMap(([sym]) => state.data[sym].map(x=>x.date)))].sort();
+    return dates.map(date => {
+      let value = 0;
+      for(const [sym, shares] of active){
+        const ser = state.data[sym];
+        const exact = ser.find(x => x.date === date);
+        if(exact) value += exact.close * +shares;
+      }
+      return { date, value };
+    }).filter(x => Number.isFinite(x.value) && x.value > 0)
+      .map((x,i,arr) => ({ ...x, pnl: x.value - arr[0].value, pnlPct: (x.value / arr[0].value - 1) * 100 }));
+  }
+
+  function renderPortfolioChart(){
+    state.portfolioSeries = buildPortfolioSeries();
+    const mode = $('#portfolioChartMode').value;
+    const labels = state.portfolioSeries.map(x=>x.date);
+    const data = state.portfolioSeries.map(x => mode === 'pnl' ? x.pnl : x.value);
+    const label = mode === 'pnl' ? 'Ganancia / pérdida (€)' : 'Valor total cartera (€)';
+
+    if(state.portfolioChart) state.portfolioChart.destroy();
+    state.portfolioChart = new Chart($('#portfolioChart'),{
+      type:'line',
+      data:{labels,datasets:[{label,data,tension:.25,pointRadius:0,borderWidth:2,fill:false}]},
+      options:{
+        responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+        plugins:{legend:{labels:{color:getComputedStyle(document.body).getPropertyValue('--text')}}},
+        scales:{
+          x:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),maxTicksLimit:8},grid:{color:'rgba(150,160,190,.14)'}},
+          y:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),callback:v=>Number(v).toLocaleString('es-ES',{maximumFractionDigits:0})+' €'},grid:{color:'rgba(150,160,190,.14)'}}
+        }
+      }
+    });
+  }
+
+  function renderPortfolioTable(){
+    const total = state.rows.reduce((acc,r) => acc + ((+state.holdings[r.sym] || 0) * r.last), 0);
+    const rows = state.rows.filter(r => (+state.holdings[r.sym] || 0) > 0).map(r => {
+      const shares = +state.holdings[r.sym] || 0;
+      const ser = state.data[r.sym] || [];
+      const first = ser[0]?.close;
+      const initial = Number.isFinite(first) ? first * shares : NaN;
+      const current = r.last * shares;
+      const pnl = current - initial;
+      const pnlPct = initial ? (current/initial - 1) * 100 : NaN;
+      const weight = total ? current / total * 100 : NaN;
+      return { ...r, shares, initial, current, pnl, pnlPct, weight };
+    });
+
+    $('#portfolioTable tbody').innerHTML = rows.map(r => `<tr><td><b>${r.name}</b><br><span class="small">${r.sym.toUpperCase()}</span></td><td>${fmt(r.shares)}</td><td>${money(r.last)}</td><td><b>${money(r.current)}</b></td><td>${pct(r.weight).replace('+','')}</td><td>${money(r.initial)}</td><td class="${r.pnl>=0?'good':'bad'}"><b>${money(r.pnl)}</b></td><td class="${r.pnlPct>=0?'good':'bad'}">${pct(r.pnlPct)}</td></tr>`).join('') || '<tr><td colspan="8">Introduce cuántas acciones tienes en uno o varios valores seleccionados.</td></tr>';
+  }
+
+  function updateAllPortfolioViews(){
+    renderPortfolioTable();
+    renderPortfolioChart();
+  }
+
   function renderTable(){
     $('#table tbody').innerHTML = state.rows.map(r => `<tr><td><b>${r.name}</b><br><span class="small">${r.sym.toUpperCase()}</span></td><td>${fmt(r.last)}</td><td class="${r.change>=0?'good':'bad'}">${pct(r.change)}</td><td>${fmt(r.s20)}</td><td>${fmt(r.s50)}</td><td class="${r.rsi>70?'warn':r.rsi<30?'good':''}">${fmt(r.rsi)}</td><td class="${r.macd>=0?'good':'bad'}">${fmt(r.macd)}</td><td>${r.bb}</td><td>${fmt(r.vol)}%</td><td>${fmt(r.support)}</td><td>${fmt(r.resistance)}</td><td class="${r.predPct>=0?'good':'bad'}">${pct(r.predPct)}</td><td class="${r.score>0?'good':r.score<0?'bad':'warn'}"><b>${r.signal}</b></td></tr>`).join('') || '<tr><td colspan="13">Sin datos. Revisa la URL del Worker y pulsa Actualizar.</td></tr>';
   }
@@ -368,16 +468,22 @@
     const best = [...rows].sort((a,b)=>b.score-a.score || b.change-a.change).slice(0,3);
     const risk = [...rows].sort((a,b)=>b.vol-a.vol).slice(0,3);
     const over = rows.filter(r=>r.rsi>70), under = rows.filter(r=>r.rsi<30);
+    const pser = buildPortfolioSeries();
+    const lastPortfolio = pser.at(-1);
+    const portfolioText = lastPortfolio ? `<p>Cartera estimada: <b>${money(lastPortfolio.value)}</b>. Variación del periodo: <b class="${lastPortfolio.pnl>=0?'good':'bad'}">${money(lastPortfolio.pnl)} (${pct(lastPortfolio.pnlPct)})</b>.</p>` : '<p>No hay acciones introducidas para calcular cartera.</p>';
 
-    $('#aiText').innerHTML = `<p><b>Lectura IA local:</b> el modelo heurístico combina tendencia SMA20/SMA50, MACD, RSI, bandas de Bollinger, volatilidad anualizada y regresión lineal a 10 sesiones.</p><p>Sesgo agregado: <b class="${bull.length>=bear.length?'good':'bad'}">${bull.length>=bear.length?'constructivo':'defensivo'}</b>. Hay ${bull.length} valores con score positivo y ${bear.length} con score negativo.</p><p>Mejores candidatos técnicos: <b>${best.map(r=>r.name).join(', ')}</b>. Mayor riesgo por volatilidad: <b>${risk.map(r=>r.name).join(', ')}</b>.</p><p>${over.length?'Posible sobrecompra: '+over.map(r=>r.name).join(', ')+'. ':''}${under.length?'Posible sobreventa: '+under.map(r=>r.name).join(', ')+'. ':''}</p><p class="small">No es asesoramiento financiero. La predicción es estadística simple y debe validarse con contexto fundamental, noticias y gestión de riesgo.</p>`;
+    $('#aiText').innerHTML = `<p><b>Lectura IA local:</b> el modelo heurístico combina tendencia SMA20/SMA50, MACD, RSI, bandas de Bollinger, volatilidad anualizada y regresión lineal a 10 sesiones.</p>${portfolioText}<p>Sesgo agregado: <b class="${bull.length>=bear.length?'good':'bad'}">${bull.length>=bear.length?'constructivo':'defensivo'}</b>. Hay ${bull.length} valores con score positivo y ${bear.length} con score negativo.</p><p>Mejores candidatos técnicos: <b>${best.map(r=>r.name).join(', ')}</b>. Mayor riesgo por volatilidad: <b>${risk.map(r=>r.name).join(', ')}</b>.</p><p>${over.length?'Posible sobrecompra: '+over.map(r=>r.name).join(', ')+'. ':''}${under.length?'Posible sobreventa: '+under.map(r=>r.name).join(', ')+'. ':''}</p><p class="small">No es asesoramiento financiero. La predicción es estadística simple y debe validarse con contexto fundamental, noticias y gestión de riesgo.</p>`;
     $('#tags').innerHTML = [...rows].sort((a,b)=>b.score-a.score).map(r=>`<span class="badge ${r.score>0?'good':r.score<0?'bad':'warn'}">${r.name}: ${r.signal}</span>`).join('');
   }
 
   function updateKpis(){
     const rows = state.rows;
+    const pser = buildPortfolioSeries();
+    const lastP = pser.at(-1);
     $('#kCount').textContent = state.selected.length;
-    $('#kBull').textContent = rows.filter(r=>r.score>0).length;
-    $('#kBear').textContent = rows.filter(r=>r.score<0).length;
+    $('#kPortfolio').textContent = lastP ? money(lastP.value) : '0 €';
+    $('#kPnL').textContent = lastP ? money(lastP.pnl) : '0 €';
+    $('#kPnL').className = `v ${lastP && lastP.pnl < 0 ? 'bad' : 'good'}`;
     $('#kBest').textContent = rows.length ? [...rows].sort((a,b)=>b.score-a.score)[0].name : '—';
   }
 
@@ -390,12 +496,24 @@
   }
 
   function exportCsv(){
-    const cols = ['symbol','name','last','change_pct','sma20','sma50','rsi','macd','bollinger','volatility_pct','support','resistance','prediction_10d_pct','signal'];
-    const lines = [cols.join(',')].concat(state.rows.map(r => cols.map(c => JSON.stringify(({symbol:r.sym,name:r.name,last:r.last,change_pct:r.change,sma20:r.s20,sma50:r.s50,rsi:r.rsi,macd:r.macd,bollinger:r.bb,volatility_pct:r.vol,support:r.support,resistance:r.resistance,prediction_10d_pct:r.predPct,signal:r.signal})[c] ?? '')).join(',')));
-    const blob = new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});
+    const cols = ['symbol','name','shares','last','market_value_eur','portfolio_weight_pct','period_pnl_eur','period_pnl_pct','change_pct','sma20','sma50','rsi','macd','bollinger','volatility_pct','support','resistance','prediction_10d_pct','signal'];
+    const total = state.rows.reduce((acc,r) => acc + ((+state.holdings[r.sym] || 0) * r.last), 0);
+    const lines = [cols.join(',')].concat(state.rows.map(r => {
+      const shares = +state.holdings[r.sym] || 0;
+      const first = state.data[r.sym]?.[0]?.close;
+      const marketValue = shares * r.last;
+      const initial = Number.isFinite(first) ? shares * first : NaN;
+      const pnl = marketValue - initial;
+      const pnlPct = initial ? (marketValue / initial - 1) * 100 : NaN;
+      const weight = total ? marketValue / total * 100 : NaN;
+      const obj = {symbol:r.sym,name:r.name,shares,last:r.last,market_value_eur:marketValue,portfolio_weight_pct:weight,period_pnl_eur:pnl,period_pnl_pct:pnlPct,change_pct:r.change,sma20:r.s20,sma50:r.s50,rsi:r.rsi,macd:r.macd,bollinger:r.bb,volatility_pct:r.vol,support:r.support,resistance:r.resistance,prediction_10d_pct:r.predPct,signal:r.signal};
+      return cols.map(c => JSON.stringify(obj[c] ?? '')).join(',');
+    }));
+    const blob = new Blob([lines.join('
+')],{type:'text/csv;charset=utf-8'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `ibex35_radar_${new Date().toISOString().slice(0,10)}.csv`;
+    a.download = `ibex35_radar_cartera_${new Date().toISOString().slice(0,10)}.csv`;
     a.click();
     URL.revokeObjectURL(a.href);
   }
@@ -404,13 +522,14 @@
   $('#workerUrl').value = savedWorker || DEFAULT_WORKER_URL;
 
   $('#search').oninput = renderStocks;
-  $('#selectAll').onclick = () => { state.selected = UNIVERSE.map(s=>s.symbol); store('ibxSelected',state.selected); renderStocks(); renderAlerts(); updateKpis(); };
-  $('#clearAll').onclick = () => { state.selected = []; store('ibxSelected',state.selected); renderStocks(); renderAlerts(); updateKpis(); };
+  $('#selectAll').onclick = () => { state.selected = UNIVERSE.map(s=>s.symbol); store('ibxSelected',state.selected); renderStocks(); renderAlerts(); updateAllPortfolioViews(); updateKpis(); };
+  $('#clearAll').onclick = () => { state.selected = []; store('ibxSelected',state.selected); renderStocks(); renderAlerts(); updateAllPortfolioViews(); updateKpis(); };
   $('#refreshBtn').onclick = refresh;
   $('#chartMode').onchange = renderChart;
+  $('#portfolioChartMode').onchange = renderPortfolioChart;
   $('#period').onchange = refresh;
   $('#csvBtn').onclick = exportCsv;
-  $('#themeBtn').onclick = () => { document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; renderChart(); };
+  $('#themeBtn').onclick = () => { document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; renderChart(); renderPortfolioChart(); };
   $('#notifyBtn').onclick = async () => { if('Notification' in window) await Notification.requestPermission(); };
 
   renderStocks();
@@ -421,4 +540,5 @@
 </script>
 </body>
 </html>
+
 
