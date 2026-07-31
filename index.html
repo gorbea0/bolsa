@@ -1,543 +1,153 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IBEX 35 Radar — Cartera + Análisis Técnico</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <style>
-    :root{
-      --bg:#08101f;--panel:#101a33;--panel2:#14213f;--text:#eef4ff;--muted:#9fb0d0;--line:#28395f;
-      --accent:#70e1f5;--good:#39d98a;--bad:#ff5c7a;--warn:#ffd166;--r:20px;--shadow:0 18px 55px rgba(0,0,0,.35)
-    }
-    [data-theme=light]{
-      --bg:#f5f7fb;--panel:#fff;--panel2:#eef3fb;--text:#13213c;--muted:#667085;--line:#d9e2f2;
-      --accent:#0077b6;--good:#0c9958;--bad:#d7263d;--warn:#9c6a00;--shadow:0 18px 45px rgba(20,33,61,.10)
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:radial-gradient(circle at 0 0,rgba(112,225,245,.14),transparent 34%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    button,input,select{font:inherit}.wrap{max-width:1440px;margin:auto;padding:18px}
-    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;position:sticky;top:0;z-index:4;padding:14px 0;background:linear-gradient(var(--bg),rgba(0,0,0,0))}
-    .brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:16px;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:grid;place-items:center;color:#06101f;font-weight:1000;box-shadow:var(--shadow)}
-    h1{font-size:clamp(22px,4vw,36px);margin:0}.sub{margin:3px 0 0;color:var(--muted);font-size:13px}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 13px;border-radius:14px;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--accent),#9b7cff);border:0;color:#071324;font-weight:900}.btn.danger{color:var(--bad)}
-    .grid{display:grid;grid-template-columns:390px 1fr;gap:18px}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}.card h2{font-size:18px;margin:0 0 12px}
-    .small{font-size:12px;color:var(--muted);line-height:1.45}label{display:block;font-size:12px;color:var(--muted);margin:11px 0 6px}
-    .field,select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--text);padding:11px 12px;border-radius:14px;outline:none}option{color:#111}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stack{display:flex;flex-direction:column;gap:12px}.list{max-height:470px;overflow:auto;padding-right:4px}
-    .stock{display:grid;grid-template-columns:auto 1fr 92px;gap:10px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,.035);margin-bottom:8px}.stock input[type=checkbox]{width:18px;height:18px}.stock .shares{padding:9px 10px;text-align:right}.ticker{font-weight:900}.name{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pill{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);color:var(--muted)}
-    .status{border:1px solid var(--line);background:rgba(255,255,255,.035);padding:10px;border-radius:15px;color:var(--muted);line-height:1.5}.status.goodStatus{border-color:rgba(57,217,138,.45)}.status.badStatus{border-color:rgba(255,92,122,.55)}
-    .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.kpi{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:13px}.kpi .v{font-size:23px;font-weight:1000;margin-top:7px}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
-    .chartBox{height:430px}.chartBox.smallChart{height:360px}.tableWrap{overflow:auto;-webkit-overflow-scrolling:touch}.table{width:100%;border-collapse:collapse;font-size:13.5px}.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.table th:first-child,.table td:first-child{text-align:left}
-    .aiBox{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.analysis{line-height:1.6;color:var(--muted)}.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;margin:2px;font-size:12px}
-    .alerts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.alertItem{border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,.035)}
-    .mobileHint{display:none}.sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    @media(max-width:1050px){
-      .grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.aiBox{grid-template-columns:1fr}.top{position:static;flex-direction:column}.toolbar{justify-content:flex-start}.chartBox{height:340px}.alerts{grid-template-columns:1fr}.list{max-height:none}
-    }
-    @media(max-width:560px){
-      .wrap{padding:10px}.card{padding:12px;border-radius:16px}.row,.kpis{grid-template-columns:1fr}.btn{width:100%;min-height:44px}.toolbar{width:100%}.chartBox{height:290px}.chartBox.smallChart{height:285px}.table{font-size:12px}.table th,.table td{padding:9px 8px}.top{gap:10px}.brand{align-items:flex-start}.logo{width:40px;height:40px;border-radius:14px}.sub{font-size:12px}.stock{grid-template-columns:auto 1fr;gap:8px}.stock .shares{grid-column:1 / -1;width:100%;text-align:left}.stock::after{content:'Acciones';grid-column:1 / -1;font-size:11px;color:var(--muted);margin-top:-52px;margin-left:10px;pointer-events:none}.mobileHint{display:block}.tableWrap{border:1px solid var(--line);border-radius:14px}.kpi .v{font-size:20px}.field,select{min-height:44px}
-    }
-  </style>
-</head>
-<body>
-<div class="wrap">
-  <header class="top">
-    <div class="brand">
-      <div class="logo">IBX</div>
-      <div>
-        <h1>IBEX 35 Radar</h1>
-        <p class="sub">Cartera, análisis técnico, alertas, CSV y predicción heurística.</p>
-      </div>
-    </div>
-    <div class="toolbar">
-      <button class="btn" id="themeBtn">Tema</button>
-      <button class="btn" id="notifyBtn">Notificaciones</button>
-      <button class="btn" id="csvBtn">Exportar CSV</button>
-      <button class="btn primary" id="refreshBtn">Actualizar</button>
-    </div>
-  </header>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bolsa Radar v4.2</title><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#08101f;--panel:#101a33;--panel2:#14213f;--text:#eef4ff;--muted:#9fb0d0;--line:#28395f;--accent:#70e1f5;--good:#39d98a;--bad:#ff5c7a;--warn:#ffd166}[data-theme=light]{--bg:#f5f7fb;--panel:#fff;--panel2:#eef3fb;--text:#13213c;--muted:#667085;--line:#d9e2f2;--accent:#0077b6;--good:#0c9958;--bad:#d7263d;--warn:#9c6a00}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial}.wrap{width:100%;padding:10px}.top{display:flex;justify-content:space-between;gap:10px}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.btn,.field,select{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 12px;border-radius:12px}.btn{cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--accent),#9b7cff);color:#071324;font-weight:900}.grid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:12px;margin-top:10px}.stack{display:flex;flex-direction:column;gap:10px}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:12px}.card h2{margin:0 0 10px;font-size:18px}.small{font-size:12px;color:var(--muted)}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field,select{width:100%}.list{max-height:520px;overflow:auto}.stock{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:9px;border:1px solid var(--line);border-radius:13px;margin-bottom:7px}.ticker{font-weight:800}.name{font-size:11px;color:var(--muted)}.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.kpi{border:1px solid var(--line);border-radius:13px;padding:9px}.kpi .v{font-size:18px;font-weight:900;margin-top:4px}.good{color:var(--good)}.bad{color:var(--bad)}.chartBox{height:330px}.tableWrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:12.5px}.table th,.table td{padding:8px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:right}.table th:first-child,.table td:first-child{text-align:left}.table tbody tr{cursor:pointer}.summary{padding:10px;border:1px solid var(--line);border-radius:13px;color:var(--muted);line-height:1.5}.modal{position:fixed;inset:0;background:rgba(0,0,0,.68);display:none;align-items:center;justify-content:center;padding:10px;z-index:20}.modal.open{display:flex}.modalInner{width:min(1050px,98vw);max-height:94vh;overflow:auto}.opGrid{display:grid;grid-template-columns:1.2fr .8fr .8fr .8fr .8fr;gap:7px}.ops{width:100%;border-collapse:collapse;font-size:12px}.ops{table-layout:fixed}.ops th,.ops td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:center;vertical-align:middle}.ops td:last-child,.ops th:last-child{text-align:center}.hidden{display:none!important}.seg{display:flex;gap:8px;flex-wrap:wrap}.seg .btn.active{outline:2px solid var(--accent)}@media(max-width:1050px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.top{flex-direction:column}.list{max-height:none}}@media(max-width:560px){.wrap{padding:6px}.card{padding:9px}.row,.opGrid,.kpis{grid-template-columns:1fr}.toolbar,.btn{width:100%}.chartBox{height:260px}.table{font-size:11px}}
+</style></head><body><div class="wrap">
+<header class="top"><div><h1 style="margin:0">Bolsa Radar v4.2</h1><div class="small">Cartera por defecto · observación separada · operaciones reales · rentabilidad</div></div><div class="toolbar"><button class="btn" id="themeBtn">Tema</button><button class="btn" id="csvBtn">CSV</button><button class="btn" id="exportJsonBtn">Exportar operaciones JSON</button><button class="btn" id="importJsonBtn">Cargar operaciones JSON</button><input id="importJsonFile" type="file" accept="application/json,.json" class="hidden"><button class="btn primary" id="refreshBtn">Actualizar</button></div></header>
+<main class="grid"><aside class="stack">
+<section class="card"><h2>Configuración</h2><input id="workerUrl" class="field" value="https://bolsa-api.gorbea0.workers.dev"><div class="row" style="margin-top:8px"><select id="period"><option value="90">3 meses</option><option value="180">6 meses</option><option value="365" selected>1 año</option><option value="730">2 años</option><option value="1825">5 años</option></select><select id="chartMode"><option value="normalized">Normalizado</option><option value="price">Precio</option><option value="rsi">RSI</option></select></div><div id="status" class="summary" style="margin-top:8px">Preparado.</div></section>
+<section class="card"><div class="seg"><button id="showPortfolioBtn" class="btn active">Cartera</button><button id="showWatchBtn" class="btn">Observación</button></div>
+<div id="portfolioAssetPanel"><h2 style="margin-top:12px">Activos de cartera</h2><input id="searchPortfolio" class="field" placeholder="Buscar en cartera..."><p class="small">Solo aparecen activos con operaciones y posición abierta.</p><div id="portfolioAssetList" class="list"></div></div>
+<div id="watchAssetPanel" class="hidden"><h2 style="margin-top:12px">Valores en observación</h2><select id="universeFilter"><option value="all">Todos</option><option value="IBEX 35">IBEX 35</option><option value="EEUU">EEUU</option><option value="ETF">ETF</option><option value="Cripto">Cripto</option><option value="Personalizado">Personalizado</option></select><input id="searchWatch" class="field" placeholder="Buscar..." style="margin-top:8px"><div class="row"><input id="customSymbol" class="field" placeholder="Ticker Yahoo: BSX"><input id="customName" class="field" placeholder="Nombre"></div><button id="addCustom" class="btn" style="width:100%;margin-top:8px">Añadir personalizado</button><p class="small">✓ = observación. Pulsa «Operaciones» para registrar una compra.</p><div id="watchAssetList" class="list"></div></div></section>
+</aside><section class="stack">
+<div id="portfolioView"><section class="card"><h2>Resumen de cartera</h2><div class="kpis"><div class="kpi"><span class="small">Valor actual</span><div id="kValue" class="v">0 €</div></div><div class="kpi"><span class="small">Coste vivo</span><div id="kCost" class="v">0 €</div></div><div class="kpi"><span class="small">No realizada</span><div id="kUnreal" class="v">0 €</div></div><div class="kpi"><span class="small">Realizada</span><div id="kReal" class="v">0 €</div></div><div class="kpi"><span class="small">Dividendos</span><div id="kDiv" class="v good">0 €</div></div><div class="kpi"><span class="small">Rent. total</span><div id="kReturn" class="v">0%</div></div></div></section>
+<section class="card"><h2>Cartera — activos</h2><div class="chartBox"><canvas id="portfolioAssetsChart"></canvas></div><div id="portfolioLegendInfo" class="summary">Pasa el puntero por el nombre de un activo en la leyenda para comparar precio de compra y cotización actual.</div></section>
+<section class="card"><h2>Cartera — evolución real desde operaciones</h2><select id="portfolioMode" style="max-width:260px"><option value="value">Valor actual (€)</option><option value="gain">Ganancia total (€)</option><option value="return">Rentabilidad sobre aportaciones (%)</option></select><div class="chartBox"><canvas id="portfolioChart"></canvas></div><p class="small">La serie comienza en la primera operación real de la cartera.</p></section>
 
-  <main class="grid">
-    <aside class="stack">
-      <section class="card">
-        <h2>Configuración</h2>
-        <label>URL del Cloudflare Worker</label>
-        <input class="field" id="workerUrl" value="https://bolsa-api.gorbea0.workers.dev" placeholder="https://bolsa-api.gorbea0.workers.dev" />
-        <p class="small">La app solo muestra datos recibidos desde el Worker. Si el Worker falla, se muestra error y no se generan cotizaciones simuladas.</p>
-        <div class="row">
-          <div>
-            <label>Periodo</label>
-            <select id="period">
-              <option value="90">3 meses</option>
-              <option value="180" selected>6 meses</option>
-              <option value="365">1 año</option>
-              <option value="730">2 años</option>
-            </select>
-          </div>
-          <div>
-            <label>Gráfico técnico</label>
-            <select id="chartMode">
-              <option value="normalized" selected>Normalizado</option>
-              <option value="price">Precio</option>
-              <option value="rsi">RSI</option>
-            </select>
-          </div>
-        </div>
-        <div class="status" id="status">Esperando conexión con el Worker de Cloudflare.</div>
-      </section>
-
-      <section class="card">
-        <div class="sectionTitle"><h2>Valores y acciones</h2><span class="small">Introduce cuántas acciones tienes</span></div>
-        <input class="field" id="search" placeholder="Buscar valor..." />
-        <div class="toolbar" style="margin:12px 0">
-          <button class="btn" id="selectAll">Todo</button>
-          <button class="btn" id="clearAll">Limpiar</button>
-        </div>
-        <p class="small mobileHint">En móvil, desliza las tablas horizontalmente si no caben.</p>
-        <div class="list" id="stockList"></div>
-      </section>
-
-      <section class="card">
-        <h2>Alertas</h2>
-        <div class="alerts" id="alerts"></div>
-      </section>
-    </aside>
-
-    <section class="stack">
-      <section class="card">
-        <h2>Resumen</h2>
-        <div class="kpis">
-          <div class="kpi"><span class="small">Seguidos</span><div class="v" id="kCount">0</div></div>
-          <div class="kpi"><span class="small">Valor cartera</span><div class="v" id="kPortfolio">0 €</div></div>
-          <div class="kpi"><span class="small">Gan./pérd.</span><div class="v" id="kPnL">0 €</div></div>
-          <div class="kpi"><span class="small">Mejor score</span><div class="v" id="kBest">—</div></div>
-          <div class="kpi"><span class="small">Actualizado</span><div class="v" style="font-size:15px" id="kTime">—</div></div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Gráfico técnico</h2>
-        <div class="chartBox"><canvas id="chart"></canvas></div>
-        <p class="small">Normalizado compara rendimiento relativo. Precio muestra cotización real. RSI muestra momentum.</p>
-      </section>
-
-      <section class="card">
-        <div class="sectionTitle">
-          <h2>Evolución de cartera</h2>
-          <select id="portfolioChartMode" style="max-width:260px">
-            <option value="value" selected>Valor total en €</option>
-            <option value="pnl">Ganancia / pérdida en €</option>
-          </select>
-        </div>
-        <div class="chartBox smallChart"><canvas id="portfolioChart"></canvas></div>
-        <p class="small">Reconstruye hacia atrás el valor de tu cartera multiplicando tus acciones por el precio histórico de cada valor. La variación se calcula frente al primer día visible del periodo.</p>
-      </section>
-
-      <section class="card">
-        <h2>Tabla de cartera</h2>
-        <div class="tableWrap">
-          <table class="table" id="portfolioTable">
-            <thead><tr><th>Valor</th><th>Acciones</th><th>Último</th><th>Valor €</th><th>Peso</th><th>Valor inicial €</th><th>Gan./pérd. €</th><th>Gan./pérd. %</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>IA local / interpretación</h2>
-        <div class="aiBox">
-          <div class="analysis" id="aiText">Pulsa actualizar.</div>
-          <div id="tags"></div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Tabla técnica</h2>
-        <div class="tableWrap">
-          <table class="table" id="table">
-            <thead>
-              <tr>
-                <th>Valor</th><th>Último</th><th>Var.</th><th>SMA20</th><th>SMA50</th><th>RSI</th><th>MACD</th><th>Boll.</th><th>Vol.</th><th>Soporte</th><th>Resist.</th><th>Pred. 10d</th><th>Señal</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-  </main>
-</div>
-
+<section class="card"><h2>Tabla de cartera</h2><div class="tableWrap"><table class="table" id="portfolioTable"><thead><tr><th>Activo</th><th>Acciones</th><th>Precio compra</th><th>Coste medio c/gastos</th><th>Último</th><th>Valor</th><th>Coste vivo</th><th>No real.</th><th>Realizada</th><th>Dividendos</th><th>Total</th><th>Rent. total</th></tr></thead><tbody></tbody></table></div><div id="portfolioSummary" class="summary"></div></section>
+<section class="card"><h2>Tabla técnica de cartera</h2><div class="tableWrap"><table class="table" id="techTable"><thead><tr><th>Activo</th><th>Último</th><th>Divisa</th><th>Var. 1a</th><th>RSI</th><th>MACD</th><th>Vol.rel</th><th>Presión</th><th>Yield 12m</th><th>Próx.div.</th><th>Señal</th></tr></thead><tbody></tbody></table></div></section>
+<section class="card"><h2>Interpretación final</h2><div id="interpretation" class="summary">Sin datos.</div></section></div>
+<div id="watchView" class="hidden"><section class="card"><h2>Observación — gráfico</h2><div class="chartBox"><canvas id="watchChart"></canvas></div></section><section class="card"><h2>Observación — tabla técnica</h2><div class="tableWrap"><table class="table" id="watchTechTable"><thead><tr><th>Activo</th><th>Último</th><th>Divisa</th><th>Var. 1a</th><th>RSI</th><th>MACD</th><th>Vol.rel</th><th>Presión</th><th>Yield 12m</th><th>Próx.div.</th><th>Señal</th></tr></thead><tbody></tbody></table></div></section></div>
+</section></main></div>
+<div id="assetModal" class="modal"><div class="card modalInner"><div class="toolbar" style="justify-content:space-between"><h2 id="modalTitle">Activo</h2><button id="modalClose" class="btn">Cerrar</button></div><div class="row"><select id="modalMode"><option value="price">Precio</option><option value="return">Rentabilidad desde compra (%)</option><option value="gain">Ganancia no realizada (€)</option></select><div></div></div><div class="chartBox"><canvas id="modalChart"></canvas></div><div id="modalSummary" class="summary"></div><h3>Operaciones</h3><div class="opGrid"><input id="opDate" type="date" class="field"><select id="opType"><option value="BUY">Compra</option><option value="SELL">Venta</option></select><input id="opQty" type="number" min="0" step="0.000001" class="field" placeholder="Unidades"><input id="opPrice" type="number" min="0" step="0.0001" class="field" placeholder="Precio"><input id="opFee" type="number" min="0" step="0.01" class="field" placeholder="Comisión"></div><button id="addOperation" class="btn primary" style="margin-top:8px">Añadir operación</button><div class="tableWrap" style="margin-top:8px"><table class="ops"><colgroup>
+<col style="width:18%"><col style="width:16%"><col style="width:18%"><col style="width:18%"><col style="width:18%"><col style="width:12%">
+</colgroup><thead><tr><th>Fecha</th><th>Tipo</th><th>Unidades</th><th>Precio</th><th>Comisión</th><th>Acción</th></tr></thead><tbody id="opsBody"></tbody></table></div></div></div>
 <script>
-(() => {
-  const DEFAULT_WORKER_URL = 'https://bolsa-api.gorbea0.workers.dev';
+(()=>{const BASE=[
+['san.es','Santander','IBEX 35','Acción'],['bbva.es','BBVA','IBEX 35','Acción'],['cabk.es','CaixaBank','IBEX 35','Acción'],['bkt.es','Bankinter','IBEX 35','Acción'],['sab.es','Sabadell','IBEX 35','Acción'],['uni.es','Unicaja','IBEX 35','Acción'],['ibe.es','Iberdrola','IBEX 35','Acción'],['ele.es','Endesa','IBEX 35','Acción'],['red.es','Redeia','IBEX 35','Acción'],['ntgy.es','Naturgy','IBEX 35','Acción'],['rep.es','Repsol','IBEX 35','Acción'],['eng.es','Enagás','IBEX 35','Acción'],['itx.es','Inditex','IBEX 35','Acción'],['ams.es','Amadeus','IBEX 35','Acción'],['aena.es','Aena','IBEX 35','Acción'],['acs.es','ACS','IBEX 35','Acción'],['tef.es','Telefónica','IBEX 35','Acción'],['idr.es','Indra','IBEX 35','Acción'],['map.es','Mapfre','IBEX 35','Acción'],
+['AAPL','Apple','EEUU','Acción'],['MSFT','Microsoft','EEUU','Acción'],['NVDA','Nvidia','EEUU','Acción'],['AMZN','Amazon','EEUU','Acción'],['GOOG','Alphabet','EEUU','Acción'],['GOOGL','Alphabet A','EEUU','Acción'],['META','Meta','EEUU','Acción'],['TSLA','Tesla','EEUU','Acción'],['BSX','Boston Scientific','EEUU','Acción'],['SNDK','SanDisk','EEUU','Acción'],['JPM','JPMorgan','EEUU','Acción'],['KO','Coca-Cola','EEUU','Acción'],['SPY','SPDR S&P 500 ETF','ETF','ETF'],['VOO','Vanguard S&P 500 ETF','ETF','ETF'],['QQQ','Invesco QQQ','ETF','ETF'],['VWCE.DE','Vanguard FTSE All-World UCITS','ETF','ETF'],['IWDA.AS','iShares Core MSCI World UCITS','ETF','ETF'],['BTC-USD','Bitcoin','Cripto','Cripto'],['ETH-USD','Ethereum','Cripto','Cripto']].map(x=>({symbol:x[0],name:x[1],market:x[2],type:x[3]}));
+const $=s=>document.querySelector(s),load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},save=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),fmt=n=>Number.isFinite(n)?n.toLocaleString('es-ES',{maximumFractionDigits:2}):'—',money=n=>Number.isFinite(n)?n.toLocaleString('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:2}):'—',pct=n=>Number.isFinite(n)?`${n>=0?'+':''}${n.toFixed(2)}%`:'—';
+const fmtDate=d=>{if(!d)return'—';const m=String(d).match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?`${m[3]}/${m[2]}/${m[1]}`:d};
 
-  const UNIVERSE = [
-    ['san.es','Santander','Banca'],['bbva.es','BBVA','Banca'],['cabk.es','CaixaBank','Banca'],['bkt.es','Bankinter','Banca'],['sab.es','Sabadell','Banca'],['uni.es','Unicaja','Banca'],
-    ['ibe.es','Iberdrola','Eléctrica'],['ele.es','Endesa','Eléctrica'],['red.es','Redeia','Eléctrica'],['ntgy.es','Naturgy','Energía'],['rep.es','Repsol','Petróleo'],['eng.es','Enagás','Gas'],
-    ['itx.es','Inditex','Retail'],['ams.es','Amadeus','Tecnología viajes'],['aena.es','Aena','Infraestructuras'],['acs.es','ACS','Construcción'],['ana.es','Acciona','Construcción'],['ane.es','Acciona Energía','Renovables'],['fer.es','Ferrovial','Infraestructuras'],
-    ['clnx.es','Cellnex','Telecom'],['tef.es','Telefónica','Telecom'],['idr.es','Indra','Tecnología'],['grif.es','Grifols','Salud'],['rovio.es','Rovi','Salud'],['map.es','Mapfre','Seguros'],['mrl.es','Merlin Properties','Inmobiliario'],['colon.es','Colonial','Inmobiliario'],
-    ['acx.es','Acerinox','Acero'],['mts.es','ArcelorMittal','Acero'],['slr.es','Solaria','Renovables'],['fdr.es','Fluidra','Consumo'],['log.es','Logista','Distribución'],['scyr.es','Sacyr','Construcción'],['puig.es','Puig','Consumo']
-  ].map(([symbol,name,sector]) => ({symbol,name,sector}));
+let universe=[...BASE,...load('customAssets',[])];const state={watch:load('brWatch',['AAPL','san.es']),ops:load('brOperations',{}),data:{},divs:{},currency:{},fx:null,charts:{},modalChart:null,modalSym:null,view:'portfolio'};window.state=state;
+const meta=s=>universe.find(x=>x.symbol===s)||{symbol:s,name:s,market:'Personalizado',type:'Activo'},opsFor=s=>(state.ops[s]||[]).slice().sort((a,b)=>a.date.localeCompare(b.date));
+function positionAt(sym,date){let shares=0,costNative=0;for(const o of opsFor(sym)){if(o.date>date)break;const q=+o.qty,p=+o.price,fee=+o.fee||0;if(o.type==='BUY'){costNative+=q*p+fee;shares+=q}else if(o.type==='SELL'&&shares>0){const sq=Math.min(q,shares),avg=costNative/shares;costNative-=sq*avg;shares-=sq;if(shares<1e-9){shares=0;costNative=0}}}return{shares,costNative,avg:shares?costNative/shares:0}}
+const portfolioSymbols=()=>Object.keys(state.ops).filter(s=>positionAt(s,'9999-12-31').shares>1e-9),watchSymbols=()=>state.watch.filter(s=>!portfolioSymbols().includes(s)),activeSymbols=()=>[...new Set([...portfolioSymbols(),...state.watch])];
+function renderPortfolioAssets(){const q=$('#searchPortfolio').value.toLowerCase();const syms=portfolioSymbols().filter(s=>`${s} ${meta(s).name}`.toLowerCase().includes(q));$('#portfolioAssetList').innerHTML=syms.map(s=>`<div class="stock"><div></div><div><div class="ticker">${meta(s).name}</div><div class="name">${s} · ${meta(s).market}</div></div><button class="btn" data-openp="${s}">Operaciones</button></div>`).join('')||'<p class="small">No hay activos con posición abierta.</p>';document.querySelectorAll('[data-openp]').forEach(el=>el.onclick=()=>openModal(el.dataset.openp))}
+function renderWatchAssets(){const q=$('#searchWatch').value.toLowerCase(),f=$('#universeFilter').value;$('#watchAssetList').innerHTML=universe.filter(x=>(f==='all'||x.market===f)&&(!q||`${x.symbol} ${x.name} ${x.market}`.toLowerCase().includes(q))).map(x=>`<div class="stock"><input type="checkbox" data-watch="${x.symbol}" ${state.watch.includes(x.symbol)?'checked':''}><div><div class="ticker">${x.name}</div><div class="name">${x.symbol} · ${x.market}</div></div><button class="btn" data-open="${x.symbol}">Operaciones</button></div>`).join('');document.querySelectorAll('[data-watch]').forEach(el=>el.onchange=e=>{const s=e.target.dataset.watch;state.watch=e.target.checked?[...new Set([...state.watch,s])]:state.watch.filter(x=>x!==s);save('brWatch',state.watch);refresh()});document.querySelectorAll('[data-open]').forEach(el=>el.onclick=()=>openModal(el.dataset.open))}
+async function getSeries(sym,days){const base=$('#workerUrl').value.trim().replace(/\/$/,'');const r=await fetch(`${base}/history?symbol=${encodeURIComponent(sym)}&days=${days}&t=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw new Error(`${sym}: ${r.status}`);return await r.json()}
+function nearestFx(date){if(!state.fx?.length)return 1;let v=state.fx[0].close;for(const x of state.fx){if(x.date>date)break;v=x.close}return v||1}function toEUR(v,c,d){return c==='USD'?v/nearestFx(d):v}
+function priceAt(sym,date){let p=NaN;for(const x of state.data[sym]||[]){if(x.date>date)break;p=x.close}return p}
+function liveCostEUR(sym,date){let shares=0,cost=0;for(const o of opsFor(sym)){if(o.date>date)break;const q=+o.qty,p=+o.price,fee=+o.fee||0,c=state.currency[sym]||'EUR';if(o.type==='BUY'){cost+=toEUR(q*p+fee,c,o.date);shares+=q}else if(o.type==='SELL'&&shares>0){const sq=Math.min(q,shares),avg=cost/shares;cost-=sq*avg;shares-=sq;if(shares<1e-9){shares=0;cost=0}}}return cost}
+function realizedEUR(sym,date='9999-12-31'){let shares=0,cost=0,real=0;for(const o of opsFor(sym)){if(o.date>date)break;const q=+o.qty,p=+o.price,fee=+o.fee||0,c=state.currency[sym]||'EUR';if(o.type==='BUY'){cost+=toEUR(q*p+fee,c,o.date);shares+=q}else if(o.type==='SELL'&&shares>0){const sq=Math.min(q,shares),avg=cost/shares;real+=toEUR(sq*p-fee,c,o.date)-sq*avg;cost-=sq*avg;shares-=sq;if(shares<1e-9){shares=0;cost=0}}}return real}
+function divEUR(sym,to='9999-12-31'){const c=state.currency[sym]||'EUR';return(state.divs[sym]||[]).filter(d=>d.date<=to).reduce((a,d)=>a+toEUR(d.amount*positionAt(sym,d.date).shares,c,d.date),0)}
+function firstBuyPrice(sym){const o=opsFor(sym).find(o=>o.type==='BUY');return o?+o.price:NaN}
+function currentRow(sym){const ser=state.data[sym]||[],last=ser.at(-1);if(!last)return null;const p=positionAt(sym,last.date),c=state.currency[sym]||'EUR',value=toEUR(p.shares*last.close,c,last.date),cost=liveCostEUR(sym,last.date),real=realizedEUR(sym,last.date),div=divEUR(sym,last.date),unreal=value-cost,total=unreal+real+div;return{sym,...meta(sym),shares:p.shares,buy:firstBuyPrice(sym),avg:p.avg,currency:c,last:last.close,value,cost,real,div,unreal,total,ret:cost?total/cost*100:NaN}}
+function requiredDays(){let earliest=Date.now();for(const a of Object.values(state.ops))for(const o of a)earliest=Math.min(earliest,new Date(o.date).getTime());return Math.max(365,+$('#period').value,Math.min(1825,Math.ceil((Date.now()-earliest)/86400000)+30))}
+async function refresh(){const b=$('#refreshBtn');b.disabled=true;b.textContent='Actualizando...';const days=requiredDays(),syms=activeSymbols();state.data={};state.divs={};state.currency={};let err=[];try{const fx=await getSeries('EURUSD=X',days);state.fx=fx.data}catch{state.fx=null}for(const s of syms){try{const j=await getSeries(s,days);state.data[s]=j.data;state.divs[s]=j.dividends||[];state.currency[s]=j.currency||'EUR'}catch(e){err.push(e.message)}}renderAll();$('#status').innerHTML=err.length?`<span class="bad">${err.length} errores</span>`:`<span class="good">Datos cargados</span>`;b.disabled=false;b.textContent='Actualizar'}
+function rsi(a,n=14){if(a.length<=n)return NaN;let g=0,l=0;const s=a.slice(-n-1);for(let i=1;i<s.length;i++){const c=s[i].close-s[i-1].close;c>=0?g+=c:l-=c}return l===0?100:100-100/(1+g/l)}function ema(v,n){if(!v.length)return NaN;let e=v[0],k=2/(n+1);for(const x of v)e=x*k+e*(1-k);return e}
+function tech(sym){const s=state.data[sym]||[],last=s.at(-1);if(!last)return null;const closes=s.map(x=>x.close),macd=ema(closes.slice(-60),12)-ema(closes.slice(-60),26),rr=rsi(s),vol=s.slice(-20).map(x=>x.volume||0),avg=vol.reduce((a,b)=>a+b,0)/Math.max(1,vol.length),rel=(last.volume||0)/avg,prev=s.at(-2),pressure=prev?(last.close>prev.close&&rel>=1?'Compra':last.close<prev.close&&rel>=1?'Venta':'Neutra'):'—',start=s[Math.max(0,s.length-252)]?.close||s[0].close,var1=(last.close/start-1)*100,from=new Date(Date.now()-365*86400000).toISOString().slice(0,10),d12=(state.divs[sym]||[]).filter(d=>d.date>=from).reduce((a,d)=>a+d.amount,0),yield12=d12/last.close*100;let score=(macd>0?1:-1)+(rr<30?1:rr>70?-1:0)+(pressure==='Compra'?1:pressure==='Venta'?-1:0);return{last:last.close,var1,rsi:rr,macd,rel,pressure,yield12,signal:score>=2?'Alcista fuerte':score===1?'Alcista':score<=-2?'Bajista fuerte':score===-1?'Bajista':'Neutral'}}
+function nextDiv(sym){const d=state.divs[sym]||[];if(d.length<2)return'—';const gaps=[];for(let i=1;i<d.length;i++)gaps.push((new Date(d[i].date)-new Date(d[i-1].date))/86400000);const nd=new Date(d.at(-1).date);nd.setDate(nd.getDate()+Math.round(gaps.reduce((a,b)=>a+b,0)/gaps.length));return nd.toISOString().slice(0,10)+' est.'}
+function drawAligned(id,syms){
+ const mode=$('#chartMode').value,days=+$('#period').value;
+ const labels=[...new Set(syms.flatMap(s=>(state.data[s]||[]).slice(-days).map(x=>x.date)))].sort();
+ const sets=syms.map(s=>{
+   const ser=(state.data[s]||[]).slice(-days),base=ser[0]?.close||1,mp=new Map();
+   for(let i=0;i<ser.length;i++){
+     const x=ser[i];
+     mp.set(x.date,mode==='price'?x.close:mode==='rsi'?rsi(ser.slice(0,i+1)):x.close/base*100)
+   }
+   return{label:meta(s).name,symbol:s,data:labels.map(d=>mp.has(d)?mp.get(d):null),spanGaps:false,tension:.2,pointRadius:0,borderWidth:2}
+ });
+ if(state.charts[id])state.charts[id].destroy();
+ const legendOpts={
+   onClick:null,
+   labels:{color:getComputedStyle(document.body).getPropertyValue('--text')}
+ };
+ if(id==='portfolioAssetsChart'){
+   legendOpts.onHover=(event,item,legend)=>{
+     const ds=legend.chart.data.datasets[item.datasetIndex],sym=ds.symbol,r=currentRow(sym);
+     const box=$('#portfolioLegendInfo');
+     if(!r||!box)return;
+     const rawBuy=r.buy,now=r.last;
+     const change=Number.isFinite(rawBuy)&&rawBuy!==0?(now/rawBuy-1)*100:NaN;
+     box.innerHTML=`<b>${r.name}</b> · Compra: <b>${fmt(rawBuy)} ${r.currency}</b> · Actual: <b>${fmt(now)} ${r.currency}</b> · Variación de cotización: <b class="${change>=0?'good':'bad'}">${pct(change)}</b> · Coste medio con gastos: ${fmt(r.avg)} ${r.currency}`;
+   };
+   legendOpts.onLeave=()=>{
+     const box=$('#portfolioLegendInfo');
+     if(box)box.textContent='Pasa el puntero por el nombre de un activo en la leyenda para comparar precio de compra y cotización actual.';
+   };
+ }
+ state.charts[id]=new Chart($('#'+id),{
+   type:'line',
+   data:{labels,datasets:sets},
+   options:{
+     responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+     plugins:{legend:legendOpts,tooltip:{callbacks:{title:items=>items.length?fmtDate(items[0].label):''}}},
+     scales:{
+       x:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),maxTicksLimit:8,callback:function(value){return fmtDate(this.getLabelForValue(value))}}},
+       y:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted')}}
+     }
+   }
+ })
+}
+function portfolioHistory(){const syms=portfolioSymbols().filter(s=>state.data[s]?.length);if(!syms.length)return[];const firstOp=syms.flatMap(s=>opsFor(s)).sort((a,b)=>a.date.localeCompare(b.date))[0]?.date;const dates=[...new Set(syms.flatMap(s=>state.data[s].map(x=>x.date)))].sort().filter(d=>!firstOp||d>=firstOp);let contributed=0;return dates.map(date=>{let value=0,real=0,div=0,buys=0,sells=0;for(const s of syms){const p=positionAt(s,date),px=priceAt(s,date),c=state.currency[s]||'EUR';if(Number.isFinite(px))value+=toEUR(p.shares*px,c,date);real+=realizedEUR(s,date);div+=divEUR(s,date);for(const o of opsFor(s)){if(o.date===date){if(o.type==='BUY')buys+=toEUR((+o.qty)*(+o.price)+(+o.fee||0),c,o.date);else if(o.type==='SELL')sells+=toEUR((+o.qty)*(+o.price)-(+o.fee||0),c,o.date)}}}contributed+=buys-sells;const gain=value+real+div-contributed;return{date,value,gain,ret:contributed?gain/contributed*100:0,contributed}}).filter(x=>x.value>0||x.contributed!==0)}
+function drawPortfolio(){const h=portfolioHistory(),mode=$('#portfolioMode').value,labels=h.map(x=>x.date),data=h.map(x=>mode==='value'?x.value:mode==='gain'?x.gain:x.ret);if(state.charts.portfolioChart)state.charts.portfolioChart.destroy();state.charts.portfolioChart=new Chart($('#portfolioChart'),{type:'line',data:{labels,datasets:[{label:mode,data,tension:.2,pointRadius:0,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{tooltip:{callbacks:{title:items=>items.length?fmtDate(items[0].label):''}}},scales:{x:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),maxTicksLimit:8,callback:function(value){const l=this.getLabelForValue(value);return fmtDate(l)}}},y:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted')}}}}})}
+function tableTechRows(syms,target){const tr=syms.map(s=>({s,m:meta(s),t:tech(s),c:state.currency[s]||'—'})).filter(x=>x.t);$(target+' tbody').innerHTML=tr.map(x=>`<tr data-sym="${x.s}"><td><b>${x.m.name}</b><br><span class="small">${x.s}</span></td><td>${fmt(x.t.last)}</td><td>${x.c}</td><td>${pct(x.t.var1)}</td><td>${fmt(x.t.rsi)}</td><td>${fmt(x.t.macd)}</td><td>${fmt(x.t.rel)}x</td><td>${x.t.pressure}</td><td>${pct(x.t.yield12).replace('+','')}</td><td>${nextDiv(x.s)}</td><td>${x.t.signal}</td></tr>`).join('');document.querySelectorAll(target+' [data-sym]').forEach(x=>x.onclick=()=>openModal(x.dataset.sym))}
+function renderTables(){const pr=portfolioSymbols().map(currentRow).filter(Boolean);$('#portfolioTable tbody').innerHTML=pr.map(r=>`<tr data-sym="${r.sym}"><td><b>${r.name}</b><br><span class="small">${r.sym}</span></td><td>${fmt(r.shares)}</td><td>${fmt(r.buy)} ${r.currency}</td><td>${fmt(r.avg)} ${r.currency}</td><td>${fmt(r.last)} ${r.currency}</td><td>${money(r.value)}</td><td>${money(r.cost)}</td><td class="${r.unreal>=0?'good':'bad'}">${money(r.unreal)}</td><td class="${r.real>=0?'good':'bad'}">${money(r.real)}</td><td class="good">${money(r.div)}</td><td class="${r.total>=0?'good':'bad'}">${money(r.total)}</td><td class="${r.ret>=0?'good':'bad'}">${pct(r.ret)}</td></tr>`).join('')||'<tr><td colspan="12">Añade compras para crear la cartera.</td></tr>';document.querySelectorAll('#portfolioTable [data-sym]').forEach(x=>x.onclick=()=>openModal(x.dataset.sym));tableTechRows(portfolioSymbols(),'#techTable');tableTechRows(watchSymbols(),'#watchTechTable')}
+function renderSummary(){const rows=portfolioSymbols().map(currentRow).filter(Boolean);let value=0,cost=0,un=0,re=0,di=0;for(const r of rows){value+=r.value;cost+=r.cost;un+=r.unreal;re+=r.real;di+=r.div}const total=un+re+di,ret=cost?total/cost*100:0;$('#kValue').textContent=money(value);$('#kCost').textContent=money(cost);$('#kUnreal').textContent=money(un);$('#kReal').textContent=money(re);$('#kDiv').textContent=money(di);$('#kReturn').textContent=pct(ret);$('#kUnreal').className='v '+(un>=0?'good':'bad');$('#kReal').className='v '+(re>=0?'good':'bad');$('#kReturn').className='v '+(ret>=0?'good':'bad');$('#portfolioSummary').innerHTML=rows.length?`Valor actual ${money(value)}. Resultado total ${money(total)} (${pct(ret)}): ${money(un)} no realizado, ${money(re)} realizado y ${money(di)} en dividendos.`:'Añade operaciones para calcular la rentabilidad real.';$('#interpretation').textContent='La cartera se muestra siempre en EUR. El precio y los indicadores técnicos se mantienen en la divisa original de cada activo. La rentabilidad real usa operaciones, comisiones, ventas, dividendos y conversión USD/EUR.'}
+function applyView(){const p=state.view==='portfolio';$('#portfolioView').classList.toggle('hidden',!p);$('#watchView').classList.toggle('hidden',p);$('#portfolioAssetPanel').classList.toggle('hidden',!p);$('#watchAssetPanel').classList.toggle('hidden',p);$('#showPortfolioBtn').classList.toggle('active',p);$('#showWatchBtn').classList.toggle('active',!p)}
+function renderAll(){renderPortfolioAssets();renderWatchAssets();const p=portfolioSymbols().filter(s=>state.data[s]),w=watchSymbols().filter(s=>state.data[s]);drawAligned('portfolioAssetsChart',p);drawAligned('watchChart',w);drawPortfolio();renderTables();renderSummary();applyView()}
+function modalSeries(sym){const mode=$('#modalMode').value,ser=(state.data[sym]||[]).slice(-365);if(mode==='price')return{labels:ser.map(x=>x.date),data:ser.map(x=>x.close),label:'Precio'};const labels=ser.map(x=>x.date),data=ser.map(x=>{const p=positionAt(sym,x.date),c=state.currency[sym]||'EUR',value=toEUR(p.shares*x.close,c,x.date),cost=liveCostEUR(sym,x.date),unreal=value-cost;return mode==='gain'?unreal:(cost?unreal/cost*100:0)});return{labels,data,label:mode==='gain'?'Ganancia no realizada (€)':'Rentabilidad desde compra (%)'}}
+function drawModal(){const sym=state.modalSym;if(!sym)return;const ms=modalSeries(sym);if(state.modalChart)state.modalChart.destroy();state.modalChart=new Chart($('#modalChart'),{type:'line',data:{labels:ms.labels,datasets:[{label:ms.label,data:ms.data,tension:.2,pointRadius:0,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{tooltip:{callbacks:{title:items=>items.length?fmtDate(items[0].label):''}}},scales:{x:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),maxTicksLimit:8,callback:function(value){const l=this.getLabelForValue(value);return fmtDate(l)}}},y:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted')}}}}})}
+function openModal(sym){state.modalSym=sym;$('#modalTitle').textContent=`${meta(sym).name} (${sym})`;$('#assetModal').classList.add('open');renderOps();drawModal();const r=currentRow(sym),t=tech(sym);$('#modalSummary').innerHTML=r?`Posición ${fmt(r.shares)}. Precio compra ${fmt(r.buy)} ${r.currency}. Coste medio con gastos ${fmt(r.avg)} ${r.currency}. Valor actual ${money(r.value)}. No realizada ${money(r.unreal)}. Realizada ${money(r.real)}. Dividendos ${money(r.div)}. Rentabilidad real ${pct(r.ret)}. RSI ${fmt(t?.rsi)}.`:'Sin posición actual. Añade una compra.'}
+function renderOps(){const s=state.modalSym,arr=opsFor(s);$('#opsBody').innerHTML=arr.map((o,i)=>`<tr><td>${fmtDate(o.date)}</td><td>${o.type==='BUY'?'Compra':'Venta'}</td><td>${fmt(o.qty)}</td><td>${fmt(o.price)}</td><td>${fmt(o.fee||0)}</td><td><button class="btn" data-del="${i}">Borrar</button></td></tr>`).join('');document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const a=opsFor(s);a.splice(+b.dataset.del,1);state.ops[s]=a;save('brOperations',state.ops);renderOps();refresh()})}
+$('#addOperation').onclick=()=>{const s=state.modalSym,date=$('#opDate').value,type=$('#opType').value,qty=+$('#opQty').value,price=+$('#opPrice').value,fee=+$('#opFee').value||0;if(!date||!(qty>0)||!(price>0))return alert('Completa fecha, unidades y precio.');state.ops[s]=[...(state.ops[s]||[]),{date,type,qty,price,fee}];save('brOperations',state.ops);$('#opQty').value='';$('#opPrice').value='';$('#opFee').value='';renderOps();refresh()};
+$('#modalMode').onchange=drawModal;$('#modalClose').onclick=()=>$('#assetModal').classList.remove('open');$('#assetModal').onclick=e=>{if(e.target.id==='assetModal')$('#assetModal').classList.remove('open')};$('#showPortfolioBtn').onclick=()=>{state.view='portfolio';applyView()};$('#showWatchBtn').onclick=()=>{state.view='watch';applyView()};$('#addCustom').onclick=()=>{const symbol=$('#customSymbol').value.trim(),name=$('#customName').value.trim()||symbol;if(!symbol)return;const a=load('customAssets',[]);if(!a.some(x=>x.symbol===symbol)&&!BASE.some(x=>x.symbol===symbol)){a.push({symbol,name,market:'Personalizado',type:'Activo'});save('customAssets',a);universe=[...BASE,...a]}renderWatchAssets()};$('#searchPortfolio').oninput=renderPortfolioAssets;$('#searchWatch').oninput=renderWatchAssets;$('#universeFilter').onchange=renderWatchAssets;$('#refreshBtn').onclick=refresh;$('#period').onchange=renderAll;$('#chartMode').onchange=renderAll;$('#portfolioMode').onchange=drawPortfolio;$('#themeBtn').onclick=()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==='light'?'dark':'light';renderAll()};$('#csvBtn').onclick=()=>{const rows=portfolioSymbols().map(currentRow).filter(Boolean),cols=['symbol','name','shares','currency','last','value_eur','cost_eur','unrealized_eur','realized_eur','dividends_eur','total_return_pct'],lines=[cols.join(',')].concat(rows.map(r=>cols.map(c=>JSON.stringify(({symbol:r.sym,name:r.name,shares:r.shares,currency:r.currency,last:r.last,value_eur:r.value,cost_eur:r.cost,unrealized_eur:r.unreal,realized_eur:r.real,dividends_eur:r.div,total_return_pct:r.ret})[c]??'')).join(',')));const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bolsa_radar_v4.csv';a.click()};
+$('#exportJsonBtn').onclick=()=>{
+ const payload={
+   app:'Bolsa Radar',
+   version:'4.2',
+   exportedAt:new Date().toISOString(),
+   operations:state.ops
+ };
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download=`bolsa_radar_operaciones_${new Date().toISOString().slice(0,10)}.json`;
+ a.click();
+ URL.revokeObjectURL(a.href);
+};
+$('#importJsonBtn').onclick=()=>$('#importJsonFile').click();
+$('#importJsonFile').onchange=async e=>{
+ const file=e.target.files?.[0];
+ if(!file)return;
+ try{
+   const parsed=JSON.parse(await file.text());
+   const ops=parsed.operations??parsed;
+   if(!ops||typeof ops!=='object'||Array.isArray(ops))throw new Error('Formato JSON de operaciones no válido');
+   for(const [sym,arr] of Object.entries(ops)){
+     if(!Array.isArray(arr))throw new Error(`Operaciones no válidas para ${sym}`);
+     for(const o of arr){
+       if(!o||!/^\\d{4}-\\d{2}-\\d{2}$/.test(o.date)||!['BUY','SELL'].includes(o.type)||!(+o.qty>0)||!(+o.price>0))
+         throw new Error(`Operación inválida en ${sym}`);
+     }
+   }
+   state.ops=ops;
+   save('brOperations',state.ops);
+   renderPortfolioAssets();
+   await refresh();
+   alert('Operaciones cargadas correctamente.');
+ }catch(err){
+   console.error(err);
+   alert('No se pudo cargar el JSON: '+err.message);
+ }finally{
+   e.target.value='';
+ }
+};
 
-  const $ = s => document.querySelector(s);
-  const store = (k,v) => localStorage.setItem(k, JSON.stringify(v));
-  const load = (k,d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
-  const fmt = n => Number.isFinite(n) ? n.toLocaleString('es-ES',{maximumFractionDigits:2}) : '—';
-  const money = n => Number.isFinite(n) ? n.toLocaleString('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:2}) : '—';
-  const pct = n => Number.isFinite(n) ? `${n>=0?'+':''}${n.toFixed(2)}%` : '—';
+$('#workerUrl').value=localStorage.getItem('workerUrl')||'https://bolsa-api.gorbea0.workers.dev';$('#workerUrl').onchange=()=>localStorage.setItem('workerUrl',$('#workerUrl').value.trim());$('#opDate').value=new Date().toISOString().slice(0,10);applyView();refresh()})();
+</script></body></html>
 
-  const state = {
-    selected: load('ibxSelected',['san.es','bbva.es','ibe.es','itx.es','rep.es']),
-    alerts: load('ibxAlerts',{}),
-    holdings: load('ibxHoldings',{}),
-    data: {}, rows: [], chart: null, portfolioChart: null, portfolioSeries: []
-  };
-
-  function setStatus(html, kind='') {
-    const el = $('#status');
-    el.innerHTML = html;
-    el.classList.remove('goodStatus','badStatus');
-    if(kind === 'good') el.classList.add('goodStatus');
-    if(kind === 'bad') el.classList.add('badStatus');
-  }
-
-  function renderStocks(){
-    const q = $('#search').value.toLowerCase();
-    $('#stockList').innerHTML = UNIVERSE
-      .filter(s => !q || `${s.symbol} ${s.name} ${s.sector}`.toLowerCase().includes(q))
-      .map(s => `<label class="stock"><input type="checkbox" data-s="${s.symbol}" ${state.selected.includes(s.symbol)?'checked':''}><div><div class="ticker">${s.name}</div><div class="name">${s.symbol.toUpperCase()} · ${s.sector}</div></div><input class="field shares" type="number" min="0" step="1" data-h="${s.symbol}" value="${state.holdings[s.symbol] ?? ''}" placeholder="Acciones"></label>`)
-      .join('');
-
-    document.querySelectorAll('[data-s]').forEach(x => x.onchange = e => {
-      const s = e.target.dataset.s;
-      state.selected = e.target.checked ? [...new Set([...state.selected,s])] : state.selected.filter(v => v !== s);
-      store('ibxSelected', state.selected);
-      renderAlerts(); updateAllPortfolioViews(); updateKpis();
-    });
-
-    document.querySelectorAll('[data-h]').forEach(x => x.oninput = e => {
-      const sym = e.target.dataset.h;
-      const v = parseFloat(e.target.value);
-      if(Number.isFinite(v) && v > 0) state.holdings[sym] = v;
-      else delete state.holdings[sym];
-      store('ibxHoldings', state.holdings);
-      updateAllPortfolioViews(); updateKpis();
-    });
-  }
-
-  function renderAlerts(){
-    $('#alerts').innerHTML = state.selected.map(sym => {
-      const s = UNIVERSE.find(x => x.symbol === sym);
-      const a = state.alerts[sym] || {};
-      return `<div class="alertItem"><b>${s.name}</b><div class="row"><div><label>Mín.</label><input class="field" type="number" step="0.01" data-a="min" data-sym="${sym}" value="${a.min??''}"></div><div><label>Máx.</label><input class="field" type="number" step="0.01" data-a="max" data-sym="${sym}" value="${a.max??''}"></div></div></div>`;
-    }).join('') || '<p class="small">Selecciona valores.</p>';
-
-    document.querySelectorAll('[data-a]').forEach(i => i.oninput = e => {
-      const sym = e.target.dataset.sym, t = e.target.dataset.a;
-      state.alerts[sym] ??= {};
-      const v = parseFloat(e.target.value);
-      Number.isFinite(v) ? state.alerts[sym][t] = v : delete state.alerts[sym][t];
-      store('ibxAlerts', state.alerts);
-    });
-  }
-
-  async function getSeries(sym, days){
-    const base = $('#workerUrl').value.trim().replace(/\/$/, '');
-    if(!base) throw new Error('Worker no configurado');
-
-    localStorage.setItem('workerUrl', base);
-    const r = await fetch(`${base}/history?symbol=${encodeURIComponent(sym)}&days=${days}`, { cache: 'no-store' });
-    if(!r.ok) throw new Error(`${sym}: ${r.status} ${await r.text()}`);
-
-    const j = await r.json();
-    if(!j || !Array.isArray(j.data) || j.data.length < 2) throw new Error(`${sym}: respuesta sin datos suficientes`);
-
-    return j.data
-      .map(x => ({date:x.date, close:+x.close, high:+x.high, low:+x.low, volume:+x.volume || 0}))
-      .filter(x => x.date && Number.isFinite(x.close));
-  }
-
-  function sma(a,n){ return a.length<n ? NaN : a.slice(-n).reduce((s,x)=>s+x.close,0)/n; }
-
-  function emaVals(vals,n){
-    if(!vals.length) return [];
-    const k = 2/(n+1), out = [];
-    let e = vals[0];
-    for(const v of vals){ e = v*k + e*(1-k); out.push(e); }
-    return out;
-  }
-
-  function rsiSeries(a,n=14){
-    const out = [];
-    for(let i=0;i<a.length;i++){
-      if(i<n){ out.push(NaN); continue; }
-      let g=0,l=0;
-      for(let j=i-n+1;j<=i;j++){
-        const c = a[j].close - a[j-1].close;
-        c >= 0 ? g += c : l -= c;
-      }
-      out.push(l===0 ? 100 : 100 - 100/(1+g/l));
-    }
-    return out;
-  }
-
-  function std(vals){
-    const clean = vals.filter(Number.isFinite);
-    if(clean.length < 2) return NaN;
-    const m = clean.reduce((a,b)=>a+b,0)/clean.length;
-    return Math.sqrt(clean.reduce((a,b)=>a+(b-m)**2,0)/clean.length);
-  }
-
-  function linPred(a,h=10){
-    const y = a.slice(-60).map(x=>x.close), n = y.length;
-    if(n < 8) return NaN;
-    const sx = n*(n-1)/2, sx2 = (n-1)*n*(2*n-1)/6;
-    const sy = y.reduce((a,b)=>a+b,0), sxy = y.reduce((a,b,i)=>a+i*b,0);
-    const den = n*sx2 - sx*sx;
-    if(!den) return NaN;
-    const m = (n*sxy - sx*sy)/den, b = (sy - m*sx)/n;
-    return m*(n-1+h)+b;
-  }
-
-  function metrics(sym,ser){
-    const closes = ser.map(x=>x.close), last = closes.at(-1), first = closes[0];
-    const s20 = sma(ser,20), s50 = sma(ser,50), rsi = rsiSeries(ser).at(-1);
-    const ema12 = emaVals(closes,12), ema26 = emaVals(closes,26), macd = ema12.at(-1)-ema26.at(-1);
-    const ret = closes.slice(1).map((v,i)=>v/closes[i]-1);
-    const vol = std(ret.slice(-30))*Math.sqrt(252)*100;
-    const pred = linPred(ser), predPct = (pred/last-1)*100;
-    const recent = ser.slice(-30);
-    const support = Math.min(...recent.map(x=>x.low).filter(Number.isFinite));
-    const resistance = Math.max(...recent.map(x=>x.high).filter(Number.isFinite));
-    const sd20 = std(closes.slice(-20));
-    const upper = s20 + 2*sd20, lower = s20 - 2*sd20;
-
-    let score = 0;
-    score += last > s20 ? 1 : -1;
-    score += s20 > s50 ? 1 : -1;
-    score += macd > 0 ? 1 : -1;
-    score += predPct > 1 ? 1 : predPct < -1 ? -1 : 0;
-    score += rsi < 30 ? 1 : rsi > 70 ? -1 : 0;
-
-    const signal = score>=3 ? 'Alcista fuerte' : score>=1 ? 'Alcista' : score<=-3 ? 'Bajista fuerte' : score<=-1 ? 'Bajista' : 'Neutral';
-    return {sym, name:UNIVERSE.find(x=>x.symbol===sym)?.name||sym, last, change:(last/first-1)*100, s20, s50, rsi, macd, vol, pred, predPct, support, resistance, upper, lower, bb:last>upper?'Alta':last<lower?'Baja':'Media', score, signal};
-  }
-
-  async function refresh(){
-    const btn = $('#refreshBtn');
-    btn.disabled = true;
-    btn.textContent = 'Actualizando...';
-    setStatus('Cargando datos reales desde Cloudflare Worker...');
-
-    const days = +$('#period').value;
-    state.data = {};
-    const errors = [];
-
-    for(const sym of state.selected){
-      try{
-        state.data[sym] = await getSeries(sym, days);
-      }catch(e){
-        console.error(e);
-        errors.push(e.message || String(e));
-      }
-    }
-
-    state.rows = Object.entries(state.data).map(([s,d]) => metrics(s,d));
-    renderChart(); renderTable(); renderAI(); checkAlerts(); updateAllPortfolioViews(); updateKpis();
-    $('#kTime').textContent = new Date().toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'});
-
-    if(errors.length){
-      setStatus(`<span class="bad">Error:</span> ${errors.length} valor(es) no pudieron cargarse desde el Worker. No se han generado datos simulados.<br><span class="small">${errors.slice(0,3).join('<br>')}</span>`, 'bad');
-    } else {
-      setStatus('<span class="good">Datos reales cargados correctamente desde Cloudflare Worker.</span>', 'good');
-    }
-
-    btn.disabled = false;
-    btn.textContent = 'Actualizar';
-  }
-
-  function renderChart(){
-    const mode = $('#chartMode').value;
-    const labels = [...new Set(Object.values(state.data).flatMap(s=>s.map(x=>x.date)))];
-    const datasets = Object.entries(state.data).map(([sym,ser]) => {
-      const m = metrics(sym,ser), name = m.name;
-      let data;
-      if(mode === 'rsi'){
-        const rs = rsiSeries(ser);
-        data = ser.map((x,i)=>({x:x.date,y:rs[i]}));
-      } else if(mode === 'price') {
-        data = ser.map(x=>({x:x.date,y:x.close}));
-      } else {
-        const b = ser[0].close;
-        data = ser.map(x=>({x:x.date,y:x.close/b*100}));
-      }
-      return {label:name, data, tension:.25, pointRadius:0, borderWidth:2};
-    });
-
-    if(state.chart) state.chart.destroy();
-    state.chart = new Chart($('#chart'),{
-      type:'line',
-      data:{labels,datasets},
-      options:{
-        responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
-        plugins:{legend:{onClick:null, labels:{color:getComputedStyle(document.body).getPropertyValue('--text')}}},
-        scales:{
-          x:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),maxTicksLimit:8},grid:{color:'rgba(150,160,190,.14)'}},
-          y:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted')},grid:{color:'rgba(150,160,190,.14)'}}
-        }
-      }
-    });
-  }
-
-  function buildPortfolioSeries(){
-    const active = Object.entries(state.holdings).filter(([sym,shares]) => state.data[sym] && Number.isFinite(+shares) && +shares > 0);
-    if(!active.length) return [];
-
-    const dates = [...new Set(active.flatMap(([sym]) => state.data[sym].map(x=>x.date)))].sort();
-    return dates.map(date => {
-      let value = 0;
-      for(const [sym, shares] of active){
-        const ser = state.data[sym];
-        const exact = ser.find(x => x.date === date);
-        if(exact) value += exact.close * +shares;
-      }
-      return { date, value };
-    }).filter(x => Number.isFinite(x.value) && x.value > 0)
-      .map((x,i,arr) => ({ ...x, pnl: x.value - arr[0].value, pnlPct: (x.value / arr[0].value - 1) * 100 }));
-  }
-
-  function renderPortfolioChart(){
-    state.portfolioSeries = buildPortfolioSeries();
-    const mode = $('#portfolioChartMode').value;
-    const labels = state.portfolioSeries.map(x=>x.date);
-    const data = state.portfolioSeries.map(x => mode === 'pnl' ? x.pnl : x.value);
-    const label = mode === 'pnl' ? 'Ganancia / pérdida (€)' : 'Valor total cartera (€)';
-
-    if(state.portfolioChart) state.portfolioChart.destroy();
-    state.portfolioChart = new Chart($('#portfolioChart'),{
-      type:'line',
-      data:{labels,datasets:[{label,data,tension:.25,pointRadius:0,borderWidth:2,fill:false}]},
-      options:{
-        responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
-        plugins:{legend:{labels:{color:getComputedStyle(document.body).getPropertyValue('--text')}}},
-        scales:{
-          x:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),maxTicksLimit:8},grid:{color:'rgba(150,160,190,.14)'}},
-          y:{ticks:{color:getComputedStyle(document.body).getPropertyValue('--muted'),callback:v=>Number(v).toLocaleString('es-ES',{maximumFractionDigits:0})+' €'},grid:{color:'rgba(150,160,190,.14)'}}
-        }
-      }
-    });
-  }
-
-  function renderPortfolioTable(){
-    const total = state.rows.reduce((acc,r) => acc + ((+state.holdings[r.sym] || 0) * r.last), 0);
-    const rows = state.rows.filter(r => (+state.holdings[r.sym] || 0) > 0).map(r => {
-      const shares = +state.holdings[r.sym] || 0;
-      const ser = state.data[r.sym] || [];
-      const first = ser[0]?.close;
-      const initial = Number.isFinite(first) ? first * shares : NaN;
-      const current = r.last * shares;
-      const pnl = current - initial;
-      const pnlPct = initial ? (current/initial - 1) * 100 : NaN;
-      const weight = total ? current / total * 100 : NaN;
-      return { ...r, shares, initial, current, pnl, pnlPct, weight };
-    });
-
-    $('#portfolioTable tbody').innerHTML = rows.map(r => `<tr><td><b>${r.name}</b><br><span class="small">${r.sym.toUpperCase()}</span></td><td>${fmt(r.shares)}</td><td>${money(r.last)}</td><td><b>${money(r.current)}</b></td><td>${pct(r.weight).replace('+','')}</td><td>${money(r.initial)}</td><td class="${r.pnl>=0?'good':'bad'}"><b>${money(r.pnl)}</b></td><td class="${r.pnlPct>=0?'good':'bad'}">${pct(r.pnlPct)}</td></tr>`).join('') || '<tr><td colspan="8">Introduce cuántas acciones tienes en uno o varios valores seleccionados.</td></tr>';
-  }
-
-  function updateAllPortfolioViews(){
-    renderPortfolioTable();
-    renderPortfolioChart();
-  }
-
-  function renderTable(){
-    $('#table tbody').innerHTML = state.rows.map(r => `<tr><td><b>${r.name}</b><br><span class="small">${r.sym.toUpperCase()}</span></td><td>${fmt(r.last)}</td><td class="${r.change>=0?'good':'bad'}">${pct(r.change)}</td><td>${fmt(r.s20)}</td><td>${fmt(r.s50)}</td><td class="${r.rsi>70?'warn':r.rsi<30?'good':''}">${fmt(r.rsi)}</td><td class="${r.macd>=0?'good':'bad'}">${fmt(r.macd)}</td><td>${r.bb}</td><td>${fmt(r.vol)}%</td><td>${fmt(r.support)}</td><td>${fmt(r.resistance)}</td><td class="${r.predPct>=0?'good':'bad'}">${pct(r.predPct)}</td><td class="${r.score>0?'good':r.score<0?'bad':'warn'}"><b>${r.signal}</b></td></tr>`).join('') || '<tr><td colspan="13">Sin datos. Revisa la URL del Worker y pulsa Actualizar.</td></tr>';
-  }
-
-  function renderAI(){
-    const rows = state.rows;
-    if(!rows.length){
-      $('#aiText').innerHTML = 'Sin datos reales cargados. Revisa la URL del Worker y pulsa Actualizar.';
-      $('#tags').innerHTML = '';
-      return;
-    }
-
-    const bull = rows.filter(r=>r.score>0), bear = rows.filter(r=>r.score<0);
-    const best = [...rows].sort((a,b)=>b.score-a.score || b.change-a.change).slice(0,3);
-    const risk = [...rows].sort((a,b)=>b.vol-a.vol).slice(0,3);
-    const over = rows.filter(r=>r.rsi>70), under = rows.filter(r=>r.rsi<30);
-    const pser = buildPortfolioSeries();
-    const lastPortfolio = pser.at(-1);
-    const portfolioText = lastPortfolio ? `<p>Cartera estimada: <b>${money(lastPortfolio.value)}</b>. Variación del periodo: <b class="${lastPortfolio.pnl>=0?'good':'bad'}">${money(lastPortfolio.pnl)} (${pct(lastPortfolio.pnlPct)})</b>.</p>` : '<p>No hay acciones introducidas para calcular cartera.</p>';
-
-    $('#aiText').innerHTML = `<p><b>Lectura IA local:</b> el modelo heurístico combina tendencia SMA20/SMA50, MACD, RSI, bandas de Bollinger, volatilidad anualizada y regresión lineal a 10 sesiones.</p>${portfolioText}<p>Sesgo agregado: <b class="${bull.length>=bear.length?'good':'bad'}">${bull.length>=bear.length?'constructivo':'defensivo'}</b>. Hay ${bull.length} valores con score positivo y ${bear.length} con score negativo.</p><p>Mejores candidatos técnicos: <b>${best.map(r=>r.name).join(', ')}</b>. Mayor riesgo por volatilidad: <b>${risk.map(r=>r.name).join(', ')}</b>.</p><p>${over.length?'Posible sobrecompra: '+over.map(r=>r.name).join(', ')+'. ':''}${under.length?'Posible sobreventa: '+under.map(r=>r.name).join(', ')+'. ':''}</p><p class="small">No es asesoramiento financiero. La predicción es estadística simple y debe validarse con contexto fundamental, noticias y gestión de riesgo.</p>`;
-    $('#tags').innerHTML = [...rows].sort((a,b)=>b.score-a.score).map(r=>`<span class="badge ${r.score>0?'good':r.score<0?'bad':'warn'}">${r.name}: ${r.signal}</span>`).join('');
-  }
-
-  function updateKpis(){
-    const rows = state.rows;
-    const pser = buildPortfolioSeries();
-    const lastP = pser.at(-1);
-    $('#kCount').textContent = state.selected.length;
-    $('#kPortfolio').textContent = lastP ? money(lastP.value) : '0 €';
-    $('#kPnL').textContent = lastP ? money(lastP.pnl) : '0 €';
-    $('#kPnL').className = `v ${lastP && lastP.pnl < 0 ? 'bad' : 'good'}`;
-    $('#kBest').textContent = rows.length ? [...rows].sort((a,b)=>b.score-a.score)[0].name : '—';
-  }
-
-  function checkAlerts(){
-    for(const r of state.rows){
-      const a = state.alerts[r.sym] || {};
-      const hit = (Number.isFinite(a.min) && r.last <= a.min) || (Number.isFinite(a.max) && r.last >= a.max);
-      if(hit && Notification?.permission === 'granted') new Notification('Alerta IBEX 35',{body:`${r.name}: ${fmt(r.last)}`});
-    }
-  }
-
-  function exportCsv(){
-    const cols = ['symbol','name','shares','last','market_value_eur','portfolio_weight_pct','period_pnl_eur','period_pnl_pct','change_pct','sma20','sma50','rsi','macd','bollinger','volatility_pct','support','resistance','prediction_10d_pct','signal'];
-    const total = state.rows.reduce((acc,r) => acc + ((+state.holdings[r.sym] || 0) * r.last), 0);
-    const lines = [cols.join(',')].concat(state.rows.map(r => {
-      const shares = +state.holdings[r.sym] || 0;
-      const first = state.data[r.sym]?.[0]?.close;
-      const marketValue = shares * r.last;
-      const initial = Number.isFinite(first) ? shares * first : NaN;
-      const pnl = marketValue - initial;
-      const pnlPct = initial ? (marketValue / initial - 1) * 100 : NaN;
-      const weight = total ? marketValue / total * 100 : NaN;
-      const obj = {symbol:r.sym,name:r.name,shares,last:r.last,market_value_eur:marketValue,portfolio_weight_pct:weight,period_pnl_eur:pnl,period_pnl_pct:pnlPct,change_pct:r.change,sma20:r.s20,sma50:r.s50,rsi:r.rsi,macd:r.macd,bollinger:r.bb,volatility_pct:r.vol,support:r.support,resistance:r.resistance,prediction_10d_pct:r.predPct,signal:r.signal};
-      return cols.map(c => JSON.stringify(obj[c] ?? '')).join(',');
-    }));
-const blob = new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `ibex35_radar_cartera_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-
-  const savedWorker = localStorage.getItem('workerUrl');
-  $('#workerUrl').value = savedWorker || DEFAULT_WORKER_URL;
-
-  $('#search').oninput = renderStocks;
-  $('#selectAll').onclick = () => { state.selected = UNIVERSE.map(s=>s.symbol); store('ibxSelected',state.selected); renderStocks(); renderAlerts(); updateAllPortfolioViews(); updateKpis(); };
-  $('#clearAll').onclick = () => { state.selected = []; store('ibxSelected',state.selected); renderStocks(); renderAlerts(); updateAllPortfolioViews(); updateKpis(); };
-  $('#refreshBtn').onclick = refresh;
-  $('#chartMode').onchange = renderChart;
-  $('#portfolioChartMode').onchange = renderPortfolioChart;
-  $('#period').onchange = refresh;
-  $('#csvBtn').onclick = exportCsv;
-  $('#themeBtn').onclick = () => { document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; renderChart(); renderPortfolioChart(); };
-  $('#notifyBtn').onclick = async () => { if('Notification' in window) await Notification.requestPermission(); };
-
-  renderStocks();
-  renderAlerts();
-  updateKpis();
-  refresh();
-})();
-</script>
-</body>
-</html>
 
 
